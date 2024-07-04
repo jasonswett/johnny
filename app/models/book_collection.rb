@@ -14,10 +14,10 @@ class BookCollection
     puts
 
     ActiveRecord::Base.transaction do
-      puts "Destroying existing tokens..."
+      puts "Destroying existing tokens (#{Token.count})..."
       Token.destroy_all
 
-      puts "Inserting new tokens..."
+      puts "Inserting new tokens (#{token.keys.count})..."
       Token.insert_all(tokens.keys.map { |value| { value: value } })
     end
   end
