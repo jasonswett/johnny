@@ -1,13 +1,13 @@
 class BookCollection
   def index!
-    tokens = {}
+    values = {}
 
     Dir.glob("#{Rails.root.join("lib", "books")}/*.txt").each do |filename|
       puts "Reading #{File.basename(filename)}..."
       content = File.read(filename).downcase.gsub(/[^a-zA-Z\s.!?]/, ' ')
 
       content.scan(/\w+|[[:punct:]]/).map do |value|
-        tokens[value] ||= value
+        values[value] ||= value
       end
     end
 
@@ -18,8 +18,8 @@ class BookCollection
       delete_tokens
 
       puts
-      puts "Inserting new tokens (#{tokens.keys.count})..."
-      Token.insert_all(tokens.keys.map { |value| { value: value } })
+      puts "Inserting new tokens (#{values.keys.count})..."
+      Token.insert_all(values.keys.map { |value| { value: value } })
     end
   end
 
