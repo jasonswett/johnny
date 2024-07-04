@@ -14,11 +14,19 @@ class BookCollection
     puts
 
     ActiveRecord::Base.transaction do
-      puts "Destroying existing tokens (#{Token.count})..."
-      Token.destroy_all
+      print "Deleting existing tokens (#{Token.count})..."
+      delete_tokens
 
-      puts "Inserting new tokens (#{token.keys.count})..."
+      puts
+      puts "Inserting new tokens (#{tokens.keys.count})..."
       Token.insert_all(tokens.keys.map { |value| { value: value } })
+    end
+  end
+
+  def delete_tokens
+    Token.find_in_batches do |tokens|
+      print "."
+      Token.where(id: tokens.map(&:id)).delete_all
     end
   end
 end
