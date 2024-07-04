@@ -62,10 +62,6 @@ group :development do
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
 end
 
-gem "paranoia"
-gem "audited"
-gem "devise"
-
 group :development, :test do
   gem "dotenv-rails"
   gem "capybara"
