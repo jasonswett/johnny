@@ -45,47 +45,6 @@ class BookCollection
     @token_attributes
   end
 
-  def old_tokens
-    token_items.values.map do |token_item|
-      {
-        value: token_item[:value],
-        annotations: {
-          frequency: token_item[:frequency],
-          part_of_speech: part_of_speech(token_item[:value]),
-          contexts: token_item[:contexts]
-        }
-      }
-    end
-  end
-
-  def token_items
-    return @token_items if @token_items.present?
-
-    @token_items = {}
-
-    filenames[0..1].map { |filename| File.read(filename) }
-      .map { |content| content.downcase.gsub(SANITIZE_CONTENT_REGEX, " ") }
-      .map { |sanitized_content| sanitized_content.scan(/\w+|[[:punct:]]/) }
-      .map { |sanitized_content_as_array| tokenize(sanitized_content_as_array) }
-    @token_items
-  end
-
-  def tokenize(values)
-    values.each_with_index do |value, index|
-      @token_items[value] ||= {
-        value: value,
-        frequency: 0,
-        contexts: []
-      }
-
-      @token_items[value][:frequency] += 1
-
-      unless @token_items[value][:contexts].count >= 100
-        @token_items[value][:contexts] << context(values, index)
-      end
-    end
-  end
-
   def part_of_speech(value)
     PARTS_OF_SPEECH.each do |part_of_speech, words|
       return part_of_speech if words.include?(value)
