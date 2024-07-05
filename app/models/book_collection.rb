@@ -1,21 +1,5 @@
 class BookCollection
   def index!
-    token_items = {}
-
-    Dir.glob("#{Rails.root.join("lib", "books")}/*.txt").each do |filename|
-      puts "Reading #{File.basename(filename)}..."
-      content = File.read(filename).downcase.gsub(/[^a-zA-Z\s.!?]/, ' ')
-
-      content.scan(/\w+|[[:punct:]]/).map do |value|
-        token_items[value] ||= { value: value }
-
-        token_items[value][:frequency] ||= 0
-        token_items[value][:frequency] += 1
-      end
-    end
-
-    puts
-
     ActiveRecord::Base.transaction do
       print "Deleting existing tokens (#{Token.count})..."
       delete_tokens
@@ -31,7 +15,29 @@ class BookCollection
       end
 
       Token.insert_all(tokens)
+      puts "Done"
     end
+  end
+
+  private
+
+  def token_items
+    return @token_items if @token_items.present?
+
+    @token_items = {}
+
+    Dir.glob("#{Rails.root.join("lib", "books")}/*.txt").each do |filename|
+      content = File.read(filename).downcase.gsub(/[^a-zA-Z\s.!?]/, ' ')
+
+      content.scan(/\w+|[[:punct:]]/).map do |value|
+        @token_items[value] ||= { value: value }
+
+        @token_items[value][:frequency] ||= 0
+        @token_items[value][:frequency] += 1
+      end
+    end
+
+    @token_items
   end
 
   def delete_tokens

@@ -11,5 +11,5 @@ when "tokens"
     puts "#{token.value} (#{token.annotations['frequency']})"
   end
 else
-  puts "You didn't put anything"
+  puts "Invalid input"
 end
