@@ -7,9 +7,14 @@ class BookCollection
       delete_tokens
       puts
 
-      puts "Inserting new tokens (#{token_items.keys.count})..."
-      Token.insert_all(tokens)
+      print "Inserting new tokens (#{token_items.keys.count})..."
 
+      tokens.each_slice(1000) do |batch|
+        print "."
+        Token.insert_all(batch)
+      end
+
+      puts
       puts "Done"
     end
   end
@@ -20,7 +25,10 @@ class BookCollection
     token_items.values.map do |token_item|
       {
         value: token_item[:value],
-        annotations: { frequency: token_item[:frequency] }
+        annotations: {
+          frequency: token_item[:frequency],
+          contexts: token_item[:contexts]
+        }
       }
     end
   end
@@ -34,19 +42,29 @@ class BookCollection
       .map { |content| content.downcase.gsub(SANITIZE_CONTENT_REGEX, " ") }
       .map { |sanitized_content| sanitized_content.scan(/\w+|[[:punct:]]/) }
       .map { |sanitized_content_as_array| tokenize(sanitized_content_as_array) }
-
     @token_items
   end
 
   def tokenize(values)
-    values.each do |value|
+    values.each_with_index do |value, index|
       @token_items[value] ||= {
         value: value,
-        frequency: 0
+        frequency: 0,
+        contexts: []
       }
 
       @token_items[value][:frequency] += 1
+
+      unless @token_items[value][:contexts].count >= 10
+        @token_items[value][:contexts] << context(values, index)
+      end
     end
+  end
+
+  def context(values, index)
+    start_index = [0, index - 3].max
+    end_index = [index + 3, values.size - 1].min
+    values[start_index..end_index].join(" ")
   end
 
   def filenames
