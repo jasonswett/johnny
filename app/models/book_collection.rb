@@ -1,4 +1,6 @@
 class BookCollection
+  MAX_CONTEXT_COUNT = 100
+
   PARTS_OF_SPEECH = {
     personal_pronoun: %w(my your their his her)
   }
@@ -35,7 +37,7 @@ class BookCollection
           attrs = @token_attributes[token.value] || token.serialize
           attrs[:annotations][:contexts] ||= []
 
-          if attrs[:annotations][:contexts].count < 10
+          if attrs[:annotations][:contexts].count < MAX_CONTEXT_COUNT
             attrs[:annotations][:contexts] << sentence.to_s
           end
 
