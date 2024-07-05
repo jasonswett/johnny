@@ -1,17 +1,16 @@
 class BookCollection
   def index!
-    values = {}
-    total_counts = {}
+    token_items = {}
 
     Dir.glob("#{Rails.root.join("lib", "books")}/*.txt").each do |filename|
       puts "Reading #{File.basename(filename)}..."
       content = File.read(filename).downcase.gsub(/[^a-zA-Z\s.!?]/, ' ')
 
       content.scan(/\w+|[[:punct:]]/).map do |value|
-        values[value] ||= value
+        token_items[value] ||= { value: value }
 
-        total_counts[value] ||= 0
-        total_counts[value] += 1
+        token_items[value][:frequency] ||= 0
+        token_items[value][:frequency] += 1
       end
     end
 
@@ -22,12 +21,12 @@ class BookCollection
       delete_tokens
 
       puts
-      puts "Inserting new tokens (#{values.keys.count})..."
+      puts "Inserting new tokens (#{token_items.keys.count})..."
 
-      tokens = values.keys.map do |value|
+      tokens = token_items.values.map do |token_item|
         {
-          value: value,
-          annotations: { frequency: total_counts[value] }
+          value: token_item[:value],
+          annotations: { frequency: token_item[:frequency] }
         }
       end
 
