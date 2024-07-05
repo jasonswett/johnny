@@ -3,7 +3,7 @@ class Sentence
     @value = value
   end
 
-  def tokenize
+  def tokens
     @value.downcase.scan(/\w+|[[:punct:]]/).map do |value|
       Token.new(
         value: value,

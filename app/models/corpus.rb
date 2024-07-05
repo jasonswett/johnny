@@ -4,7 +4,7 @@ class Corpus
   end
 
   def tokenize
-    sentences.flat_map(&:tokenize)
+    sentences.flat_map(&:tokens)
   end
 
   def sentences

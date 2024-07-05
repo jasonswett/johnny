@@ -32,11 +32,13 @@ class BookCollection
 
     filenames[0..1].map { |filename| File.read(filename) }
       .map { |content| Corpus.new(content) }
-      .flat_map(&:tokenize).each do |token|
-        @token_attributes[token.value] = {
-          value: token.value,
-          annotations: token.annotations
-        }
+      .flat_map(&:sentences).each do |sentence|
+        sentence.tokens.each do |token|
+          @token_attributes[token.value] = {
+            value: token.value,
+            annotations: token.annotations
+          }
+        end
       end
 
     @token_attributes
