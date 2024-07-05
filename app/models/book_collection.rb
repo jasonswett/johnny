@@ -28,18 +28,22 @@ class BookCollection
 
     @token_items = {}
 
-    Dir.glob("#{Rails.root.join("lib", "books")}/*.txt").each do |filename|
-      content = File.read(filename).downcase.gsub(/[^a-zA-Z\s.!?]/, ' ')
+    filenames.map { |filename| File.read(filename) }
+      .map { |content| content.downcase.gsub(/[^a-zA-Z\s.!?]/, ' ') }
+      .map do |sanitized_content|
+        sanitized_content.scan(/\w+|[[:punct:]]/).map do |value|
+          @token_items[value] ||= { value: value }
 
-      content.scan(/\w+|[[:punct:]]/).map do |value|
-        @token_items[value] ||= { value: value }
-
-        @token_items[value][:frequency] ||= 0
-        @token_items[value][:frequency] += 1
+          @token_items[value][:frequency] ||= 0
+          @token_items[value][:frequency] += 1
+        end
       end
-    end
 
     @token_items
+  end
+
+  def filenames
+    Dir.glob("#{Rails.root.join("lib", "books")}/*.txt")
   end
 
   def delete_tokens
