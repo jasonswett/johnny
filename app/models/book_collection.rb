@@ -1,4 +1,6 @@
 class BookCollection
+  SANITIZE_CONTENT_REGEX = /[^a-zA-Z\s.!?]/
+
   def index!
     ActiveRecord::Base.transaction do
       print "Deleting existing tokens (#{Token.count})..."
@@ -29,9 +31,10 @@ class BookCollection
     @token_items = {}
 
     filenames.map { |filename| File.read(filename) }
-      .map { |content| content.downcase.gsub(/[^a-zA-Z\s.!?]/, ' ') }
-      .map do |sanitized_content|
-        sanitized_content.scan(/\w+|[[:punct:]]/).map do |value|
+      .map { |content| content.downcase.gsub(SANITIZE_CONTENT_REGEX, " ") }
+      .map { |sanitized_content| sanitized_content.scan(/\w+|[[:punct:]]/) }
+      .map do |sanitized_content_as_array|
+        sanitized_content_as_array.each do |value|
           @token_items[value] ||= { value: value }
 
           @token_items[value][:frequency] ||= 0
