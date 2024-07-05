@@ -10,6 +10,14 @@ when "tokens"
   Token.most_frequent_first.limit(30).each do |token|
     puts "#{token.value} (#{token.annotations['frequency']})"
   end
+when "token"
+  token = Token.find_by(value: ARGV[1])
+
+  if token.present?
+    puts token
+  else
+    puts "No such token. Sorry bro"
+  end
 else
   puts "Invalid input"
 end
