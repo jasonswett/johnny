@@ -60,7 +60,7 @@ class BookCollection
 
       @token_items[value][:frequency] += 1
 
-      unless @token_items[value][:contexts].count >= 10
+      unless @token_items[value][:contexts].count >= 100
         @token_items[value][:contexts] << context(values, index)
       end
     end
