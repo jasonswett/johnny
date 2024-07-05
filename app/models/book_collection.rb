@@ -1,6 +1,7 @@
 class BookCollection
   def index!
     values = {}
+    total_counts = {}
 
     Dir.glob("#{Rails.root.join("lib", "books")}/*.txt").each do |filename|
       puts "Reading #{File.basename(filename)}..."
@@ -8,6 +9,9 @@ class BookCollection
 
       content.scan(/\w+|[[:punct:]]/).map do |value|
         values[value] ||= value
+
+        total_counts[value] ||= 0
+        total_counts[value] += 1
       end
     end
 
@@ -19,7 +23,15 @@ class BookCollection
 
       puts
       puts "Inserting new tokens (#{values.keys.count})..."
-      Token.insert_all(values.keys.map { |value| { value: value } })
+
+      tokens = values.keys.map do |value|
+        {
+          value: value,
+          annotations: { frequency: total_counts[value] }.to_json
+        }
+      end
+
+      Token.insert_all(tokens)
     end
   end
 
