@@ -5,15 +5,16 @@ class BookCollection
     personal_pronoun: %w(my your their his her)
   }
 
-  def old_index!
+  def index!
     ActiveRecord::Base.transaction do
       print "Deleting existing tokens (#{Token.count})..."
       delete_tokens
       puts
 
-      print "Inserting new tokens (#{token_items.keys.count})..."
+      #print "Inserting new tokens (#{tokens.count})..."
+      print "Inserting"
 
-      tokens.each_slice(1000) do |batch|
+      token_attributes.values.each_slice(1000) do |batch|
         print "."
         Token.insert_all(batch)
       end
@@ -25,10 +26,18 @@ class BookCollection
 
   private
 
-  def tokens
+  def token_attributes
+    return @token_attributes if @token_attributes.present?
+
+    @token_attributes = {}
+
     filenames[0..1].map { |filename| File.read(filename) }
-      .map { |content| Corpus.new(content) }
-      .tokenize
+      .map { |content| Corpus.new(content[0..1000]) }
+      .flat_map(&:tokenize).each do |token|
+        @token_attributes[token.value] = { value: token.value }
+      end
+
+    @token_attributes
   end
 
   def old_tokens
