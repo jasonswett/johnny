@@ -40,9 +40,11 @@ class BookCollection
 
   def tokenize(values)
     values.each do |value|
-      @token_items[value] ||= { value: value }
+      @token_items[value] ||= {
+        value: value,
+        frequency: 0
+      }
 
-      @token_items[value][:frequency] ||= 0
       @token_items[value][:frequency] += 1
     end
   end
