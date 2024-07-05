@@ -11,4 +11,20 @@ RSpec.describe Corpus do
       ]
     )
   end
+
+  describe "#tokenize" do
+    it "works" do
+      corpus = Corpus.new("This is a sentence.")
+
+      expect(corpus.tokenize.map(&:to_s)).to match_array(
+        [
+          "this",
+          "is",
+          "a",
+          "sentence",
+          "."
+        ]
+      )
+    end
+  end
 end

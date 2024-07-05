@@ -3,6 +3,10 @@ class Corpus
     @content = content
   end
 
+  def tokenize
+    sentences.flat_map(&:tokenize)
+  end
+
   def sentences
     @content.split(/(?<=\.)\s+/).map do |value|
       Sentence.new(value)

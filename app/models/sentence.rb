@@ -3,6 +3,10 @@ class Sentence
     @value = value
   end
 
+  def tokenize
+    @value.downcase.scan(/\w+|[[:punct:]]/)
+  end
+
   def to_s
     @value
   end

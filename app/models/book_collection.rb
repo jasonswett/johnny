@@ -26,6 +26,12 @@ class BookCollection
   private
 
   def tokens
+    filenames[0..1].map { |filename| File.read(filename) }
+      .map { |content| Corpus.new(content) }
+      .tokenize
+  end
+
+  def old_tokens
     token_items.values.map do |token_item|
       {
         value: token_item[:value],
