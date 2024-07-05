@@ -34,10 +34,14 @@ class BookCollection
       .map { |content| Corpus.new(content) }
       .flat_map(&:sentences).each do |sentence|
         sentence.tokens.each do |token|
-          @token_attributes[token.value] = {
-            value: token.value,
-            annotations: token.annotations
-          }
+          attrs = @token_attributes[token.value] || token.serialize
+          attrs[:annotations][:contexts] ||= []
+
+          if attrs[:annotations][:contexts].count < 10
+            attrs[:annotations][:contexts] << sentence.to_s
+          end
+
+          @token_attributes[token.value] = attrs
         end
       end
 

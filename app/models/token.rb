@@ -3,6 +3,13 @@ class Token < ApplicationRecord
     order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
   end
 
+  def serialize
+    {
+      value: value,
+      annotations: annotations || {}
+    }
+  end
+
   def to_s
     value
   end

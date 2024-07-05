@@ -5,12 +5,7 @@ class Sentence
 
   def tokens
     @value.downcase.scan(/\w+|[[:punct:]]/).map do |value|
-      Token.new(
-        value: value,
-        annotations: {
-          context: @value
-        }
-      )
+      Token.new(value: value)
     end
   end
 
