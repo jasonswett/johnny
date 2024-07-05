@@ -27,7 +27,7 @@ class BookCollection
       tokens = values.keys.map do |value|
         {
           value: value,
-          annotations: { frequency: total_counts[value] }.to_json
+          annotations: { frequency: total_counts[value] }
         }
       end
 
