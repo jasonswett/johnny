@@ -1,3 +1,15 @@
 #!/usr/bin/env ruby
 
-system("bin/rake book_collection:index")
+require File.expand_path('../../config/environment', __FILE__)
+
+case ARGV[0]
+when "index"
+  book_collection = BookCollection.new
+  book_collection.index!
+when "tokens"
+  Token.most_frequent_first.limit(20).each do |token|
+    puts token.value
+  end
+else
+  puts "You didn't put anything"
+end
