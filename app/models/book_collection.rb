@@ -36,9 +36,7 @@ class BookCollection
       .flat_map(&:tokenize).each do |token|
         @token_attributes[token.value] = {
           value: token.value,
-          annotations: {
-            frequency: nil
-          }
+          annotations: token.annotations
         }
       end
 
