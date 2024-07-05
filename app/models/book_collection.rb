@@ -43,7 +43,7 @@ class BookCollection
 
     @token_items = {}
 
-    filenames.map { |filename| File.read(filename) }
+    filenames[0..1].map { |filename| File.read(filename) }
       .map { |content| content.downcase.gsub(SANITIZE_CONTENT_REGEX, " ") }
       .map { |sanitized_content| sanitized_content.scan(/\w+|[[:punct:]]/) }
       .map { |sanitized_content_as_array| tokenize(sanitized_content_as_array) }
