@@ -33,16 +33,18 @@ class BookCollection
     filenames.map { |filename| File.read(filename) }
       .map { |content| content.downcase.gsub(SANITIZE_CONTENT_REGEX, " ") }
       .map { |sanitized_content| sanitized_content.scan(/\w+|[[:punct:]]/) }
-      .map do |sanitized_content_as_array|
-        sanitized_content_as_array.each do |value|
-          @token_items[value] ||= { value: value }
-
-          @token_items[value][:frequency] ||= 0
-          @token_items[value][:frequency] += 1
-        end
-      end
+      .map { |sanitized_content_as_array| tokenize(sanitized_content_as_array) }
 
     @token_items
+  end
+
+  def tokenize(values)
+    values.each do |value|
+      @token_items[value] ||= { value: value }
+
+      @token_items[value][:frequency] ||= 0
+      @token_items[value][:frequency] += 1
+    end
   end
 
   def filenames
