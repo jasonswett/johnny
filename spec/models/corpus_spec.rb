@@ -32,6 +32,16 @@ RSpec.describe Corpus do
     end
   end
 
+  context "wrap" do
+    it "works" do
+      corpus = Corpus.new("This sentence wraps\nacross two lines.")
+
+      expect(corpus.sentences.map(&:to_s)).to match_array(
+        ["This sentence wraps across two lines."]
+      )
+    end
+  end
+
   context "question mark" do
     it "works" do
       corpus = Corpus.new("Will this work? I hope so.")
