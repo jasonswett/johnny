@@ -11,8 +11,7 @@ class BookCollection
       delete_tokens
       puts
 
-      #print "Inserting new tokens (#{tokens.count})..."
-      print "Inserting"
+      print "Inserting new tokens (#{token_attributes.count})..."
 
       token_attributes.values.each_slice(1000) do |batch|
         print "."
