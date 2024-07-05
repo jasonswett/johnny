@@ -1,6 +1,6 @@
 class Corpus
   def initialize(content)
-    @content = content
+    @content = content.gsub(/\r/, "")
   end
 
   def tokens

@@ -1,6 +1,13 @@
 require "rails_helper"
 
 RSpec.describe Corpus do
+  describe "sanitization" do
+    it "removes \r" do
+      corpus = Corpus.new("This is a sentence\r")
+      expect(corpus.sentences.map(&:to_s)).to match_array(["This is a sentence"])
+    end
+  end
+
   it "can be split into sentences" do
     corpus = Corpus.new("This is a sentence. This is another sentence.")
 
