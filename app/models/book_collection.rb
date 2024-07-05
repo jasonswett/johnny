@@ -3,23 +3,25 @@ class BookCollection
     ActiveRecord::Base.transaction do
       print "Deleting existing tokens (#{Token.count})..."
       delete_tokens
-
       puts
+
       puts "Inserting new tokens (#{token_items.keys.count})..."
-
-      tokens = token_items.values.map do |token_item|
-        {
-          value: token_item[:value],
-          annotations: { frequency: token_item[:frequency] }
-        }
-      end
-
       Token.insert_all(tokens)
+
       puts "Done"
     end
   end
 
   private
+
+  def tokens
+    token_items.values.map do |token_item|
+      {
+        value: token_item[:value],
+        annotations: { frequency: token_item[:frequency] }
+      }
+    end
+  end
 
   def token_items
     return @token_items if @token_items.present?
