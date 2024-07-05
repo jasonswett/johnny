@@ -1,6 +1,4 @@
 class BookCollection
-  SANITIZE_CONTENT_REGEX = /[^a-zA-Z\s.!?]/
-
   PARTS_OF_SPEECH = {
     personal_pronoun: %w(my your their his her)
   }

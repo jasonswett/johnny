@@ -1,4 +1,6 @@
 class Sentence
+  REGEX_PATTERN = /(?<=[.!?])\s+|\n/
+
   def initialize(value)
     @value = value
   end
