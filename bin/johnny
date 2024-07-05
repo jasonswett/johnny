@@ -7,8 +7,8 @@ when "index"
   book_collection = BookCollection.new
   book_collection.index!
 when "tokens"
-  Token.most_frequent_first.limit(20).each do |token|
-    puts token.value
+  Token.most_frequent_first.limit(30).each do |token|
+    puts "#{token.value} (#{token.annotations['frequency']})"
   end
 else
   puts "You didn't put anything"
