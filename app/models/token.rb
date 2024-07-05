@@ -4,9 +4,6 @@ class Token < ApplicationRecord
   end
 
   def to_s
-    [
-      value,
-      annotations
-    ].join("\n")
+    value
   end
 end

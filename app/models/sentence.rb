@@ -4,7 +4,9 @@ class Sentence
   end
 
   def tokenize
-    @value.downcase.scan(/\w+|[[:punct:]]/)
+    @value.downcase.scan(/\w+|[[:punct:]]/).map do |value|
+      Token.new(value: value)
+    end
   end
 
   def to_s
