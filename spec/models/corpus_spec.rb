@@ -19,6 +19,19 @@ RSpec.describe Corpus do
     )
   end
 
+  context "no space" do
+    it "works" do
+      corpus = Corpus.new("There is no space.No space at all.")
+
+      expect(corpus.sentences.map(&:to_s)).to match_array(
+        [
+          "There is no space.",
+          "No space at all."
+        ]
+      )
+    end
+  end
+
   context "question mark" do
     it "works" do
       corpus = Corpus.new("Will this work? I hope so.")
@@ -40,19 +53,6 @@ RSpec.describe Corpus do
         [
           "Dear God!",
           "I hope this works."
-        ]
-      )
-    end
-  end
-
-  context "newline" do
-    it "works" do
-      corpus = Corpus.new("No periods here\nJust newlines")
-
-      expect(corpus.sentences.map(&:to_s)).to match_array(
-        [
-          "No periods here",
-          "Just newlines"
         ]
       )
     end

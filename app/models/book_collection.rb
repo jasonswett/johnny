@@ -1,26 +1,24 @@
 class BookCollection
-  MAX_CONTEXT_COUNT = 100
+  MAX_CONTEXT_COUNT = 20
 
   PARTS_OF_SPEECH = {
     personal_pronoun: %w(my your their his her)
   }
 
   def index!
-    ActiveRecord::Base.transaction do
-      print "Deleting existing tokens (#{Token.count})..."
-      delete_tokens
-      puts
+    print "Deleting existing tokens (#{Token.count})..."
+    delete_tokens
+    puts
 
-      print "Inserting new tokens (#{token_attributes.count})..."
+    print "Inserting new tokens (#{token_attributes.count})..."
 
-      token_attributes.values.each_slice(1000) do |batch|
-        print "."
-        Token.insert_all(batch)
-      end
-
-      puts
-      puts "Done"
+    token_attributes.values.each_slice(1000) do |batch|
+      puts batch.first
+      Token.insert_all(batch)
     end
+
+    puts
+    puts "Done"
   end
 
   private
