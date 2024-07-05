@@ -4,6 +4,8 @@ class Corpus
   end
 
   def sentences
-    @content.split(/(?<=\.)\s+/)
+    @content.split(/(?<=\.)\s+/).map do |value|
+      Sentence.new(value)
+    end
   end
 end

@@ -5,7 +5,7 @@ class BookCollection
     personal_pronoun: %w(my your their his her)
   }
 
-  def index!
+  def old_index!
     ActiveRecord::Base.transaction do
       print "Deleting existing tokens (#{Token.count})..."
       delete_tokens
