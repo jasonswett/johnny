@@ -1,6 +1,10 @@
 class BookCollection
   SANITIZE_CONTENT_REGEX = /[^a-zA-Z\s.!?]/
 
+  PARTS_OF_SPEECH = {
+    personal_pronoun: %w(my your their his her)
+  }
+
   def index!
     ActiveRecord::Base.transaction do
       print "Deleting existing tokens (#{Token.count})..."
@@ -27,6 +31,7 @@ class BookCollection
         value: token_item[:value],
         annotations: {
           frequency: token_item[:frequency],
+          part_of_speech: part_of_speech(token_item[:value]),
           contexts: token_item[:contexts]
         }
       }
@@ -59,6 +64,14 @@ class BookCollection
         @token_items[value][:contexts] << context(values, index)
       end
     end
+  end
+
+  def part_of_speech(value)
+    PARTS_OF_SPEECH.each do |part_of_speech, words|
+      return part_of_speech if words.include?(value)
+    end
+
+    "unknown"
   end
 
   def context(values, index)
