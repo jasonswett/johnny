@@ -3,9 +3,23 @@ class Token < ApplicationRecord
 
   PARTS_OF_SPEECH = {
     personal_pronoun: %w(my your our their his her),
+    pronoun: %w(i you he she it we they me him her us them),
     article: %w(the a an),
-    conjunction: %w(and but or nor for so yet)
+    conjunction: %w(and but or nor for so yet although after before because if since unless until when while whereas),
+    preposition: %w(in on at by with under over between among through during before after),
+    adverb: %w(very quickly slowly silently well badly really always never often sometimes usually),
+    verb: %w(be have do say make go take come see know get give find think tell become show leave feel put bring begin keep hold write stand hear let mean set meet run pay sit speak lie lead read grow lose open walk win teach offer remember consider appear buy serve send expect build stay fall cut reach kill remain suggest raise pass sell require report decide pull return explain hope develop carry break receive agree support hit produce eat cover catch draw choose point)
   }
+
+  HIGH_CERTAINTY_PARTS_OF_SPEECH = %i(
+    pronoun
+    personal_pronoun
+    article
+    conjunction
+    preposition
+    adverb
+    verb
+  )
 
   PART_OF_SPEECH_CONFIDENCE_THRESHOLD = 0.5
 
@@ -77,7 +91,7 @@ class Token < ApplicationRecord
 
   def high_certainty_parts_of_speech
     self.annotations["contexts"].each do |context|
-      %i(personal_pronoun article conjunction).each do |part_of_speech|
+      HIGH_CERTAINTY_PARTS_OF_SPEECH.each do |part_of_speech|
         if PARTS_OF_SPEECH[part_of_speech].include?(value)
           @parts_of_speech[part_of_speech] ||= 0
           @parts_of_speech[part_of_speech] += 1
