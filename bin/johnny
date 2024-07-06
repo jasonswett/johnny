@@ -23,6 +23,12 @@ when "pos"
   Token.part_of_speech(part_of_speech).limit(30).each do |token|
     puts "#{token.value} (#{token.annotations['frequency']})"
   end
+when "analyze"
+  words = ARGV[1..-1]
+
+  tokens = words.map { |word| Token.find_by(value: word) || Token.new }
+  parts_of_speech = tokens.map { |token| token.annotations["part_of_speech"] || "?" }
+  puts parts_of_speech.join(" ")
 else
   puts "Invalid input"
 end

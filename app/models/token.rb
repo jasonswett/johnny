@@ -3,7 +3,7 @@ class Token < ApplicationRecord
 
   PARTS_OF_SPEECH = {
     personal_pronoun: %w(my your our their his her),
-    pronoun: %w(i you he she it we they me him her us them),
+    pronoun: %w(i you he she it we they me him her us them this that these those who whom whose which what),
     article: %w(the a an),
     conjunction: %w(and but or nor for so yet although after before because if since unless until when while whereas),
     preposition: %w(in on at by with under over between among through during before after),
