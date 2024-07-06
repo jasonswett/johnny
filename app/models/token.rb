@@ -64,8 +64,12 @@ class Token < ApplicationRecord
   end
 
   def part_of_speech
-    frontrunners = parts_of_speech.max_by { |_, count| count }
-    return unless frontrunners.present?
-    frontrunners.first.to_s
+    frontrunner = parts_of_speech.max_by { |_, count| count }
+    return unless frontrunner.present?
+
+    name, count = frontrunner
+    return unless count > self.annotations["frequency"].to_i / 2
+
+    name.to_s
   end
 end

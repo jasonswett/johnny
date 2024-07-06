@@ -50,7 +50,7 @@ RSpec.describe Token do
   end
 
   describe "determination" do
-    it "works" do
+    it "goes with the most common one" do
       token = Token.new(value: "fly")
 
       allow(token).to receive(:parts_of_speech).and_return(
@@ -59,6 +59,24 @@ RSpec.describe Token do
       )
 
       expect(token.part_of_speech).to eq("verb")
+    end
+
+    context "more than half" do
+      it "sets it" do
+        token = Token.new(value: "couch", annotations: { "frequency" => 100 })
+        allow(token).to receive(:parts_of_speech).and_return(noun: 55)
+
+        expect(token.part_of_speech).to eq("noun")
+      end
+    end
+
+    context "less than half" do
+      it "does not set it" do
+        token = Token.new(value: "couch", annotations: { "frequency" => 100 })
+        allow(token).to receive(:parts_of_speech).and_return(noun: 45)
+
+        expect(token.part_of_speech).to be nil
+      end
     end
   end
 end
