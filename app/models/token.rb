@@ -174,9 +174,8 @@ class Token < ApplicationRecord
   end
 
   def related_words
-    most_frequent = Token.most_frequent_first[0..1000].map(&:value)
-    Corpus.new(Token.find_by(value: value).annotations["contexts"].join(" ").downcase).tokens.map(&:value).reject do |value|
-      most_frequent.include?(value)
-    end
+    unacceptable_values = Token.most_frequent_first.limit(1000).map(&:value)
+    context_values = Corpus.new(annotations["contexts"].join(" ").downcase).tokens.map(&:value)
+    context_values - unacceptable_values
   end
 end

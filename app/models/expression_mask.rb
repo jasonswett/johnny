@@ -1,32 +1,25 @@
 class ExpressionMask
   VALID_MASKS = [
     "article adjective noun verb noun period",
-    "verb noun adjective question_mark",
+    "noun comma noun and noun verb conjunction verb period",
+    "pronoun verb noun period",
+    "pronoun verb noun conjunction article noun period",
+    "noun conjunction noun verb article noun period",
+    "article noun comma article noun conjunction article noun verb noun period",
+    "article noun comma noun conjunction noun verb noun period",
+    "pronoun conjunction pronoun verb period",
+    "adverb comma noun verb preposition noun period",
+    "preposition article noun comma preposition noun comma pronoun verb adverb period",
+    "preposition noun comma adjective noun verb adjective noun period",
+    "adjective conjunction adjective comma noun verb noun period",
+
     "noun verb adjective exclamation_point",
-    "personal_pronoun verb adverb verb noun period",
-    "pronoun verb preposition article noun period",
-    "article noun verb article adjective noun period",
-    "adverb verb pronoun period",
-    "conjunction noun verb adjective noun period",
-    "preposition article noun verb pronoun period",
-    "article noun verb conjunction noun verb period",
-    "personal_pronoun verb preposition article adjective noun period",
-    "pronoun verb article adjective noun period",
-    "noun verb adverb period",
-    "article noun adverb verb article noun period",
-    "preposition article adjective noun verb noun period",
-    "adjective noun comma article noun verb period",
-    "personal_pronoun verb noun comma conjunction noun verb period",
-    "noun verb adjective comma conjunction verb noun period",
-    "verb article adjective noun comma and verb noun period",
-    "adverb verb pronoun comma noun verb period",
-    "preposition article noun comma pronoun verb adjective period",
-    "article noun verb pronoun comma and verb noun period",
-    "personal_pronoun verb noun comma conjunction verb adjective noun period",
-    "noun comma verb article noun conjunction verb noun period",
-    "adjective noun comma verb noun comma article noun period",
-    "noun verb pronoun comma article adjective noun period",
-    "article adjective noun comma noun verb period"
+
+    "verb pronoun verb question_mark",
+    "verb pronoun verb noun question_mark",
+    "verb adjective noun adjective question_mark",
+    "verb noun adjective question_mark",
+    "verb noun conjunction noun verb noun question_mark",
   ]
 
   FREQUENCY_THRESHOLD = 1000
@@ -61,7 +54,8 @@ class ExpressionMask
 
   def random_token(part_of_speech)
     Token.most_frequent_first
-      .part_of_speech(part_of_speech)[0..FREQUENCY_THRESHOLD]
+      .part_of_speech(part_of_speech)
+      .limit(FREQUENCY_THRESHOLD)
       .sample
   end
 end
