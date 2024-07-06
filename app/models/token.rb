@@ -53,9 +53,7 @@ class Token < ApplicationRecord
         @parts_of_speech[:article] ||= 0
         @parts_of_speech[:article] += 1
       end
-    end
 
-    self.annotations["contexts"].each do |context|
       sentence_tokens = Sentence.new(context).tokens
 
       sentence_tokens.each_with_index do |token, index|
