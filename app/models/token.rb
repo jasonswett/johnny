@@ -7,10 +7,13 @@ class Token < ApplicationRecord
     order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
   end
 
-  def add_context(value)
+  after_initialize do
     self.annotations ||= {}
-    self.annotations[:contexts] ||= []
-    self.annotations[:contexts] << value
+  end
+
+  def add_context(value)
+    self.annotations["contexts"] ||= []
+    self.annotations["contexts"] << value
   end
 
   def serialize
@@ -33,17 +36,16 @@ class Token < ApplicationRecord
 
   def parts_of_speech
     @parts_of_speech = {}
-    self.annotations ||= {}
-    self.annotations[:contexts] ||= []
+    self.annotations["contexts"] ||= []
 
-    self.annotations[:contexts].each do |context|
+    self.annotations["contexts"].each do |context|
       if PARTS_OF_SPEECH[:personal_pronoun].include?(value)
         @parts_of_speech[:personal_pronoun] ||= 0
         @parts_of_speech[:personal_pronoun] += 1
       end
     end
 
-    self.annotations[:contexts].each do |context|
+    self.annotations["contexts"].each do |context|
       sentence_tokens = Sentence.new(context).tokens
 
       sentence_tokens.each_with_index do |token, index|
