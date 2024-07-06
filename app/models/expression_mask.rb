@@ -31,22 +31,29 @@ class ExpressionMask
 
   FREQUENCY_THRESHOLD = 1000
 
-  def initialize(text)
+  def initialize(text, anchor_word:)
     @parts_of_speech = text.split
+    @anchor_word = anchor_word
   end
 
   def evaluate
-    @parts_of_speech.map { |part_of_speech| random_token(part_of_speech) }
+    @parts_of_speech.map { |part_of_speech| related_token(part_of_speech) || random_token(part_of_speech) }
       .map { |token| token ? token.value : "?" }
       .join(" ")
       .gsub(/\s+([.,!?])/, '\1')
   end
 
-  def self.generate_sentence
-    new(VALID_MASKS.sample).evaluate
+  def self.generate_sentence(anchor_word:)
+    new(VALID_MASKS.sample, anchor_word:).evaluate
   end
 
   private
+
+  def related_token(part_of_speech)
+    Token.where("value in (?)", Token.find_by(value: @anchor_word).related_words)
+      .part_of_speech(part_of_speech)
+      .sample
+  end
 
   def random_token(part_of_speech)
     Token.most_frequent_first

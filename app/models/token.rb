@@ -172,4 +172,11 @@ class Token < ApplicationRecord
   def context_count
     self.annotations["contexts"].count
   end
+
+  def related_words
+    most_frequent = Token.most_frequent_first[0..1000].map(&:value)
+    Corpus.new(Token.find_by(value: "philosophy").annotations["contexts"].join(" ").downcase).tokens.map(&:value).uniq.reject do |value|
+      most_frequent.include?(value)
+    end
+  end
 end

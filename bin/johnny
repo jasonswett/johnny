@@ -18,6 +18,9 @@ when "token"
   else
     puts "No such token. Sorry bro"
   end
+when "related"
+  token = Token.find_by(value: ARGV[1])
+  puts token.related_words.join(", ")
 when "pos"
   part_of_speech = ARGV[1]
   Token.part_of_speech(part_of_speech).limit(30).each do |token|
@@ -34,8 +37,8 @@ when "eval"
   expression_mask = ExpressionMask.new(parts_of_speech.join(" "))
   puts expression_mask.evaluate
 when "generate"
-  ARGV[1].to_i.times do
-    print ExpressionMask.generate_sentence + " "
+  ARGV[2].to_i.times do
+    print ExpressionMask.generate_sentence(anchor_word: ARGV[1]) + " "
   end
 else
   puts "Invalid input"
