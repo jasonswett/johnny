@@ -21,7 +21,7 @@ class BookCollection
       token.annotations["part_of_speech"] = token.part_of_speech
       token.save!
 
-      print "." if (counter % 100).zero?
+      print "." if (index % 100).zero?
     end
 
     puts
