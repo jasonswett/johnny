@@ -9,7 +9,9 @@ class Token < ApplicationRecord
   end
 
   after_initialize do
-    self.annotations ||= {}
+    self.annotations ||= {
+      "contexts" => []
+    }
   end
 
   def add_context(value)
@@ -75,8 +77,12 @@ class Token < ApplicationRecord
     return unless frontrunner.present?
 
     name, count = frontrunner
-    return unless count > self.annotations["frequency"].to_i / 2
+    return unless count > context_count / 2
 
     name.to_s
+  end
+
+  def context_count
+    self.annotations["contexts"].count
   end
 end

@@ -86,6 +86,7 @@ RSpec.describe Token do
     context "more than half" do
       it "sets it" do
         token = Token.new(value: "couch", annotations: { "frequency" => 100 })
+        allow(token).to receive(:context_count).and_return(100)
         allow(token).to receive(:parts_of_speech).and_return(noun: 55)
 
         expect(token.part_of_speech).to eq("noun")
@@ -94,7 +95,8 @@ RSpec.describe Token do
 
     context "less than half" do
       it "does not set it" do
-        token = Token.new(value: "couch", annotations: { "frequency" => 100 })
+        token = Token.new(value: "couch")
+        allow(token).to receive(:context_count).and_return(100)
         allow(token).to receive(:parts_of_speech).and_return(noun: 45)
 
         expect(token.part_of_speech).to be nil
