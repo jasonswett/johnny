@@ -29,6 +29,52 @@ RSpec.describe Token do
     end
   end
 
+  context "end" do
+    it "works" do
+      token = Token.new(value: "big")
+      token.add_context("I pet the big")
+
+      token.adjectives({})
+      expect(token.parts_of_speech).to eq({})
+    end
+  end
+
+  context "adjective" do
+    let!(:tokens) do
+      {
+        "the" => Token.create!(
+          value: "the",
+          annotations: { part_of_speech: "article" }
+        ),
+        "a" => Token.create!(
+          value: "a",
+          annotations: { part_of_speech: "article" }
+        ),
+        "dog" => Token.create!(
+          value: "dog",
+          annotations: { part_of_speech: "noun" }
+        ),
+        "man" => Token.create!(
+          value: "man",
+          annotations: { part_of_speech: "noun" }
+        ),
+        "burger" => Token.create!(
+          value: "burger",
+          annotations: { part_of_speech: "noun" }
+        )
+      }
+    end
+
+    it "works" do
+      token = Token.new(value: "big")
+      token.add_context("I pet the big dog.")
+      token.add_context("The big man ate a big burger.")
+
+      token.adjectives(tokens)
+      expect(token.parts_of_speech[:adjective]).to eq(3)
+    end
+  end
+
   context "article" do
     it "works" do
       token = Token.new(value: "the")
@@ -81,26 +127,6 @@ RSpec.describe Token do
       )
 
       expect(token.part_of_speech).to eq("verb")
-    end
-
-    context "more than half" do
-      it "sets it" do
-        token = Token.new(value: "couch", annotations: { "frequency" => 100 })
-        allow(token).to receive(:context_count).and_return(100)
-        allow(token).to receive(:parts_of_speech).and_return(noun: 55)
-
-        expect(token.part_of_speech).to eq("noun")
-      end
-    end
-
-    context "less than half" do
-      it "does not set it" do
-        token = Token.new(value: "couch")
-        allow(token).to receive(:context_count).and_return(100)
-        allow(token).to receive(:parts_of_speech).and_return(noun: 45)
-
-        expect(token.part_of_speech).to be nil
-      end
     end
   end
 end

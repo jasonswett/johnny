@@ -12,10 +12,17 @@ class Token < ApplicationRecord
     order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
   end
 
+  scope :part_of_speech, ->(value) do
+    where("annotations->>'part_of_speech' = ?", value)
+      .order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
+  end
+
   after_initialize do
     self.annotations ||= {
       "contexts" => []
     }
+
+    @parts_of_speech = {}
   end
 
   def add_context(value)
@@ -44,24 +51,30 @@ class Token < ApplicationRecord
   def self.label_parts_of_speech
     tokens = {}
 
+    puts "Detecting articles and personal pronouns..."
     all.most_frequent_first.find_each do |token|
       token.articles_and_personal_pronouns
+      token.annotations["part_of_speech"] = token.part_of_speech
       tokens[token.value] = token
     end
 
+    puts "Detecting nouns..."
     tokens.each do |_, token|
       token.nouns
-      token.annotations["parts_of_speech"] = token.parts_of_speech
       token.annotations["part_of_speech"] = token.part_of_speech
-      token.save!
+      tokens[token.value] = token
+    end
 
-      puts token.value
+    puts "Detecting adjectives..."
+    tokens.each do |_, token|
+      token.adjectives(tokens)
+      token.annotations["part_of_speech"] = token.part_of_speech
+      token.annotations["parts_of_speech"] = token.parts_of_speech
+      token.save!
     end
   end
 
   def articles_and_personal_pronouns
-    @parts_of_speech ||= {}
-
     self.annotations["contexts"].each do |context|
       if PARTS_OF_SPEECH[:personal_pronoun].include?(value)
         @parts_of_speech[:personal_pronoun] ||= 0
@@ -78,8 +91,6 @@ class Token < ApplicationRecord
   end
 
   def nouns
-    @parts_of_speech ||= {}
-
     self.annotations["contexts"].each do |context|
       sentence_tokens = Sentence.new(context).tokens
 
@@ -99,13 +110,34 @@ class Token < ApplicationRecord
     @parts_of_speech
   end
 
+  def adjectives(tokens)
+    self.annotations["contexts"].each do |context|
+      sentence_tokens = Sentence.new(context).tokens
+
+      sentence_tokens.each_with_index do |token, index|
+        next if index == 0 || index >= (sentence_tokens.length - 1) || token.value != self.value
+
+        previous_token = tokens[sentence_tokens[index - 1].value]
+        next_token = tokens[sentence_tokens[index + 1].value]
+
+        if previous_token && previous_token.annotations["part_of_speech"] == "article" &&
+            next_token && next_token.annotations["part_of_speech"] == "noun"
+          @parts_of_speech[:noun] ||= 0
+          @parts_of_speech[:noun] -= 0.01
+          @parts_of_speech[:adjective] ||= 0
+          @parts_of_speech[:adjective] += 1
+        end
+      end
+    end
+
+    @parts_of_speech
+  end
+
   def part_of_speech
     frontrunner = parts_of_speech.max_by { |_, count| count }
     return unless frontrunner.present?
 
     name, count = frontrunner
-    return unless count > context_count * PART_OF_SPEECH_CONFIDENCE_THRESHOLD
-
     name.to_s
   end
 

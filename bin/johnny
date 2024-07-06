@@ -18,6 +18,11 @@ when "token"
   else
     puts "No such token. Sorry bro"
   end
+when "pos"
+  part_of_speech = ARGV[1]
+  Token.part_of_speech(part_of_speech).limit(30).each do |token|
+    puts "#{token.value} (#{token.annotations['frequency']})"
+  end
 else
   puts "Invalid input"
 end

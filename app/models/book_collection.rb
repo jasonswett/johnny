@@ -1,6 +1,6 @@
 class BookCollection
-  MAX_CONTEXT_COUNT = 20
-  CONTENT_CHARACTER_LIMIT = 5000
+  MAX_CONTEXT_COUNT = 50
+  CONTENT_CHARACTER_LIMIT = 100000
 
   def index!
     print "Deleting existing tokens (#{Token.count})..."
