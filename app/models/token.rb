@@ -50,14 +50,13 @@ class Token < ApplicationRecord
   end
 
   def parts_of_speech
-    @parts_of_speech ||= {}
-    self.annotations["contexts"] ||= []
     articles_and_personal_pronouns
     nouns
-    @parts_of_speech
   end
 
   def articles_and_personal_pronouns
+    @parts_of_speech ||= {}
+
     self.annotations["contexts"].each do |context|
       if PARTS_OF_SPEECH[:personal_pronoun].include?(value)
         @parts_of_speech[:personal_pronoun] ||= 0
@@ -69,9 +68,13 @@ class Token < ApplicationRecord
         @parts_of_speech[:article] += 1
       end
     end
+
+    @parts_of_speech
   end
 
   def nouns
+    @parts_of_speech ||= {}
+
     self.annotations["contexts"].each do |context|
       sentence_tokens = Sentence.new(context).tokens
 
@@ -87,6 +90,8 @@ class Token < ApplicationRecord
         end
       end
     end
+
+    @parts_of_speech
   end
 
   def part_of_speech

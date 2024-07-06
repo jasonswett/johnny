@@ -48,13 +48,8 @@ RSpec.describe Token do
     end
 
     it "does not overwrite other annotations" do
-      token = Token.new(
-        value: "my",
-        annotations: {
-          frequency: 100
-        }
-      )
-
+      token = Token.new(value: "my")
+      token.annotations["frequency"] = 100
       token.parts_of_speech
       expect(token.annotations["frequency"]).to eq(100)
     end
