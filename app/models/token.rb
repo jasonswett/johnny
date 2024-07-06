@@ -39,6 +39,16 @@ class Token < ApplicationRecord
     ].join("\n")
   end
 
+  def self.label_parts_of_speech
+    all.most_frequent_first.find_each do |token|
+      token.annotations["parts_of_speech"] = token.parts_of_speech
+      token.annotations["part_of_speech"] = token.part_of_speech
+      token.save!
+
+      puts token.value
+    end
+  end
+
   def parts_of_speech
     @parts_of_speech = {}
     self.annotations["contexts"] ||= []
