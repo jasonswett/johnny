@@ -3,7 +3,8 @@ class Token < ApplicationRecord
 
   PARTS_OF_SPEECH = {
     personal_pronoun: %w(my your our their his her),
-    article: %w(the a an)
+    article: %w(the a an),
+    conjunction: %w(and but or nor for so yet)
   }
 
   PART_OF_SPEECH_CONFIDENCE_THRESHOLD = 0.5
@@ -51,9 +52,9 @@ class Token < ApplicationRecord
   def self.label_parts_of_speech
     tokens = {}
 
-    puts "Detecting articles and personal pronouns..."
+    puts "Detecting high-certainty parts of speech..."
     all.most_frequent_first.find_each do |token|
-      token.articles_and_personal_pronouns
+      token.high_certainty_parts_of_speech
       token.annotations["part_of_speech"] = token.part_of_speech
       tokens[token.value] = token
     end
@@ -74,16 +75,13 @@ class Token < ApplicationRecord
     end
   end
 
-  def articles_and_personal_pronouns
+  def high_certainty_parts_of_speech
     self.annotations["contexts"].each do |context|
-      if PARTS_OF_SPEECH[:personal_pronoun].include?(value)
-        @parts_of_speech[:personal_pronoun] ||= 0
-        @parts_of_speech[:personal_pronoun] += 1
-      end
-
-      if PARTS_OF_SPEECH[:article].include?(value)
-        @parts_of_speech[:article] ||= 0
-        @parts_of_speech[:article] += 1
+      %i(personal_pronoun article conjunction).each do |part_of_speech|
+        if PARTS_OF_SPEECH[part_of_speech].include?(value)
+          @parts_of_speech[part_of_speech] ||= 0
+          @parts_of_speech[part_of_speech] += 1
+        end
       end
     end
 

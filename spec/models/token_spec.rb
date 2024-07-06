@@ -4,7 +4,7 @@ RSpec.describe Token do
   context "no contexts" do
     it "works" do
       token = Token.new(value: "my")
-      token.articles_and_personal_pronouns
+      token.high_certainty_parts_of_speech
       expect(token.parts_of_speech).to eq({})
     end
   end
@@ -82,7 +82,7 @@ RSpec.describe Token do
       token.add_context("The world is yours.")
       token.add_context("You're the most beautiful sausage in the world.")
 
-      token.articles_and_personal_pronouns
+      token.high_certainty_parts_of_speech
       expect(token.part_of_speech).to eq("article")
     end
   end
@@ -93,14 +93,14 @@ RSpec.describe Token do
       token.add_context("my bologna has a first name.")
       token.add_context("my goodness, you're enormous!")
 
-      token.articles_and_personal_pronouns
+      token.high_certainty_parts_of_speech
       expect(token.parts_of_speech).to eq(personal_pronoun: 2)
     end
 
     it "does not overwrite other annotations" do
       token = Token.new(value: "my")
       token.annotations["frequency"] = 100
-      token.articles_and_personal_pronouns
+      token.high_certainty_parts_of_speech
       expect(token.annotations["frequency"]).to eq(100)
     end
   end
