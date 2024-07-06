@@ -15,10 +15,13 @@ class BookCollection
 
     puts
     print "Determining parts of speech..."
-    Token.all.find_each do |token|
+
+    Token.all.each_with_index do |token, index|
       token.annotations["parts_of_speech"] = token.parts_of_speech
       token.annotations["part_of_speech"] = token.part_of_speech
       token.save!
+
+      print "." if (counter % 100).zero?
     end
 
     puts
@@ -32,7 +35,7 @@ class BookCollection
 
     @token_attributes = {}
 
-    filenames[0..1].map { |filename| File.read(filename) }
+    filenames[0..4].map { |filename| File.read(filename) }
       .map { |content| Corpus.new(content) }
       .flat_map(&:sentences).each do |sentence|
         sentence.tokens.each do |token|
