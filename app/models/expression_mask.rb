@@ -50,9 +50,13 @@ class ExpressionMask
   private
 
   def related_token(part_of_speech)
-    Token.where("value in (?)", Token.find_by(value: @anchor_word).related_words)
+    Token.where("value in (?)", related_words)
       .part_of_speech(part_of_speech)
       .sample
+  end
+
+  def related_words
+    @related_words ||= Token.find_by(value: @anchor_word).related_words
   end
 
   def random_token(part_of_speech)
