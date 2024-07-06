@@ -11,6 +11,7 @@ class ExpressionMask
     @parts_of_speech.map { |part_of_speech| Token.part_of_speech(part_of_speech).sample }
       .map { |token| token ? token.value : "?" }
       .join(" ")
+      .gsub(/\s+\./, '.')
   end
 
   def self.generate_sentence
