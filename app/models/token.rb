@@ -1,6 +1,6 @@
 class Token < ApplicationRecord
   PARTS_OF_SPEECH = {
-    personal_pronoun: %w(my your their his her)
+    personal_pronoun: %w(my your our their his her)
   }
 
   scope :most_frequent_first, -> do
