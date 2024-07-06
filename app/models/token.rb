@@ -41,6 +41,21 @@ class Token < ApplicationRecord
       end
     end
 
+    self.annotations[:contexts].each do |context|
+      sentence_tokens = Sentence.new(context).tokens
+
+      sentence_tokens.each_with_index do |token, index|
+        next if index == 0 || token.value != self.value
+
+        previous_token = sentence_tokens[index - 1]
+
+        if PARTS_OF_SPEECH[:personal_pronoun].include?(previous_token.value)
+          @parts_of_speech[:noun] ||= 0
+          @parts_of_speech[:noun] += 1
+        end
+      end
+    end
+
     @parts_of_speech
   end
 end
