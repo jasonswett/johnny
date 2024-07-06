@@ -16,6 +16,7 @@ class BookCollection
     puts
     print "Determining parts of speech..."
     Token.all.find_each do |token|
+      token.annotations["parts_of_speech"] = token.parts_of_speech
       token.annotations["part_of_speech"] = token.part_of_speech
       token.save!
     end
