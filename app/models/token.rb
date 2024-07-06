@@ -2,6 +2,7 @@ class Token < ApplicationRecord
   attr_reader :parts_of_speech
 
   PARTS_OF_SPEECH = {
+    punctuation: %w(. , : ; ? ! - /),
     personal_pronoun: %w(my your our their his her),
     pronoun: %w(i you he she it we they me him her us them this that these those who whom whose which what),
     article: %w(the a an),
@@ -12,6 +13,7 @@ class Token < ApplicationRecord
   }
 
   HIGH_CERTAINTY_PARTS_OF_SPEECH = %i(
+    punctuation
     pronoun
     personal_pronoun
     article
