@@ -2,18 +2,24 @@ class Token < ApplicationRecord
   attr_reader :parts_of_speech
 
   PARTS_OF_SPEECH = {
-    punctuation: %w(. , : ; ? ! - /),
     personal_pronoun: %w(my your our their his her),
     pronoun: %w(i you he she it we they me him her us them this that these those who whom whose which what),
     article: %w(the a an),
     conjunction: %w(and but or nor for so yet although after before because if since unless until when while whereas),
     preposition: %w(in on at by with under over between among through during before after),
     adverb: %w(very quickly slowly silently well badly really always never often sometimes usually),
-    verb: %w(be have do say make go take come see know get give find think tell become show leave feel put bring begin keep hold write stand hear let mean set meet run pay sit speak lie lead read grow lose open walk win teach offer remember consider appear buy serve send expect build stay fall cut reach kill remain suggest raise pass sell require report decide pull return explain hope develop carry break receive agree support hit produce eat cover catch draw choose point)
+    verb: %w(is be have do say make go take come see know get give find think tell become show leave feel put bring begin keep hold write stand hear let mean set meet run pay sit speak lie lead read grow lose open walk win teach offer remember consider appear buy serve send expect build stay fall cut reach kill remain suggest raise pass sell require report decide pull return explain hope develop carry break receive agree support hit produce eat cover catch draw choose point),
+
+    colon: %w(:),
+    semicolon: %w(;),
+    period: %w(.),
+    question_mark: %w(?),
+    exclamation_point: %w(!),
+    comma: %w(,),
+    hyphen: %w(-),
   }
 
   HIGH_CERTAINTY_PARTS_OF_SPEECH = %i(
-    punctuation
     pronoun
     personal_pronoun
     article
@@ -21,6 +27,14 @@ class Token < ApplicationRecord
     preposition
     adverb
     verb
+
+    colon
+    semicolon
+    period
+    question_mark
+    exclamation_point
+    comma
+    hyphen
   )
 
   PART_OF_SPEECH_CONFIDENCE_THRESHOLD = 0.5
