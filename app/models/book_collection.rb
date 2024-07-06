@@ -1,5 +1,6 @@
 class BookCollection
-  MAX_CONTEXT_COUNT = 10
+  MAX_CONTEXT_COUNT = 20
+  CONTENT_CHARACTER_LIMIT = 5000
 
   def index!
     print "Deleting existing tokens (#{Token.count})..."
@@ -14,14 +15,14 @@ class BookCollection
     end
 
     puts
-    print "Determining parts of speech..."
+    puts "Determining parts of speech..."
 
-    Token.all.each_with_index do |token, index|
+    Token.all.find_each do |token|
       token.annotations["parts_of_speech"] = token.parts_of_speech
       token.annotations["part_of_speech"] = token.part_of_speech
       token.save!
 
-      print "." if (index % 100).zero?
+      puts token.value
     end
 
     puts
@@ -35,8 +36,8 @@ class BookCollection
 
     @token_attributes = {}
 
-    filenames[0..4].map { |filename| File.read(filename) }
-      .map { |content| Corpus.new(content) }
+    filenames.map { |filename| File.read(filename) }
+      .map { |content| Corpus.new(content[0..CONTENT_CHARACTER_LIMIT]) }
       .flat_map(&:sentences).each do |sentence|
         sentence.tokens.each do |token|
           attrs = @token_attributes[token.value] || token.serialize
