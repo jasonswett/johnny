@@ -58,4 +58,8 @@ class Token < ApplicationRecord
 
     @parts_of_speech
   end
+
+  def part_of_speech
+    parts_of_speech.max_by { |_, count| count }.first.to_s
+  end
 end
