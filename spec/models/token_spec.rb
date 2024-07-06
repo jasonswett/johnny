@@ -1,6 +1,21 @@
 require "rails_helper"
 
 RSpec.describe Token do
+  context "no contexts" do
+    it "works" do
+      token = Token.new(value: "my")
+      expect(token.parts_of_speech).to eq({})
+    end
+  end
+
+  context "no parts of speech" do
+    it "works" do
+      token = Token.new(value: "my")
+      allow(token).to receive(:parts_of_speech).and_return({})
+      expect(token.part_of_speech).to be nil
+    end
+  end
+
   context "personal pronoun" do
     it "works" do
       token = Token.new(value: "my")

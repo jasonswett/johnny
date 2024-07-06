@@ -14,6 +14,13 @@ class BookCollection
     end
 
     puts
+    print "Determining parts of speech..."
+    Token.all.each do |token|
+      token.annotations[:part_of_speech] = token.part_of_speech
+      token.save!
+    end
+
+    puts
     puts "Done"
   end
 

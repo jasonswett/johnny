@@ -33,6 +33,8 @@ class Token < ApplicationRecord
 
   def parts_of_speech
     @parts_of_speech = {}
+    self.annotations ||= {}
+    self.annotations[:contexts] ||= []
 
     self.annotations[:contexts].each do |context|
       if PARTS_OF_SPEECH[:personal_pronoun].include?(value)
@@ -60,6 +62,8 @@ class Token < ApplicationRecord
   end
 
   def part_of_speech
-    parts_of_speech.max_by { |_, count| count }.first.to_s
+    frontrunners = parts_of_speech.max_by { |_, count| count }
+    return unless frontrunners.present?
+    frontrunners.first.to_s
   end
 end
