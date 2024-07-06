@@ -1,10 +1,6 @@
 class BookCollection
   MAX_CONTEXT_COUNT = 20
 
-  PARTS_OF_SPEECH = {
-    personal_pronoun: %w(my your their his her)
-  }
-
   def index!
     print "Deleting existing tokens (#{Token.count})..."
     delete_tokens
