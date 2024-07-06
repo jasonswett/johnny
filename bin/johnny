@@ -25,8 +25,8 @@ when "pos"
   end
 when "analyze"
   words = ARGV[1..-1]
-
-  tokens = words.map { |word| Token.find_by(value: word) || Token.new }
+  sentence = Sentence.new(words.join(" "))
+  tokens = sentence.tokens.map { |token| Token.find_by(value: token.value) || token }
   parts_of_speech = tokens.map { |token| token.annotations["part_of_speech"] || "?" }
   puts parts_of_speech.join(" ")
 else
