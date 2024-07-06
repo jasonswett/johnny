@@ -36,6 +36,10 @@ class BookCollection
       .flat_map(&:sentences).each do |sentence|
         sentence.tokens.each do |token|
           attrs = @token_attributes[token.value] || token.serialize
+
+          attrs[:annotations][:frequency] ||= 0
+          attrs[:annotations][:frequency] += 1
+
           attrs[:annotations][:contexts] ||= []
 
           if attrs[:annotations][:contexts].count < MAX_CONTEXT_COUNT
