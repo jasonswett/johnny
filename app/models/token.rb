@@ -1,4 +1,6 @@
 class Token < ApplicationRecord
+  attr_reader :parts_of_speech
+
   PARTS_OF_SPEECH = {
     personal_pronoun: %w(my your our their his her),
     article: %w(the a an)
@@ -40,18 +42,21 @@ class Token < ApplicationRecord
   end
 
   def self.label_parts_of_speech
+    tokens = {}
+
     all.most_frequent_first.find_each do |token|
+      token.articles_and_personal_pronouns
+      tokens[token.value] = token
+    end
+
+    tokens.each do |_, token|
+      token.nouns
       token.annotations["parts_of_speech"] = token.parts_of_speech
       token.annotations["part_of_speech"] = token.part_of_speech
       token.save!
 
       puts token.value
     end
-  end
-
-  def parts_of_speech
-    articles_and_personal_pronouns
-    nouns
   end
 
   def articles_and_personal_pronouns
