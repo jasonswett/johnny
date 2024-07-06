@@ -10,6 +10,6 @@ RSpec.describe ExpressionMask do
 
   it "works" do
     expression_mask = ExpressionMask.new("article noun verb period")
-    expect(expression_mask.evaluate).to eq("the dog sits .")
+    expect(expression_mask.evaluate).to eq("the dog sits.")
   end
 end
