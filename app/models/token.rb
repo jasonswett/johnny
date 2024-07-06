@@ -4,6 +4,8 @@ class Token < ApplicationRecord
     article: %w(the a an)
   }
 
+  PART_OF_SPEECH_CONFIDENCE_THRESHOLD = 0.5
+
   scope :most_frequent_first, -> do
     order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
   end
@@ -77,7 +79,7 @@ class Token < ApplicationRecord
     return unless frontrunner.present?
 
     name, count = frontrunner
-    return unless count > context_count / 2
+    return unless count > context_count * PART_OF_SPEECH_CONFIDENCE_THRESHOLD
 
     name.to_s
   end
