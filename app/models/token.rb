@@ -1,6 +1,7 @@
 class Token < ApplicationRecord
   PARTS_OF_SPEECH = {
-    personal_pronoun: %w(my your our their his her)
+    personal_pronoun: %w(my your our their his her),
+    article: %w(the a an)
   }
 
   scope :most_frequent_first, -> do
@@ -53,7 +54,8 @@ class Token < ApplicationRecord
 
         previous_token = sentence_tokens[index - 1]
 
-        if PARTS_OF_SPEECH[:personal_pronoun].include?(previous_token.value)
+        if PARTS_OF_SPEECH[:personal_pronoun].include?(previous_token.value) ||
+            PARTS_OF_SPEECH[:article].include?(previous_token.value)
           @parts_of_speech[:noun] ||= 0
           @parts_of_speech[:noun] += 1
         end
