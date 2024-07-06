@@ -37,8 +37,15 @@ when "eval"
   expression_mask = ExpressionMask.new(parts_of_speech.join(" "))
   puts expression_mask.evaluate
 when "generate"
-  ARGV[2].to_i.times do
-    print ExpressionMask.generate_sentence(anchor_word: ARGV[1]) + " "
+  ARGV[2..-1].each do |anchor_word|
+    puts anchor_word.upcase
+
+    ARGV[1].to_i.times do
+      print ExpressionMask.generate_sentence(anchor_word:) + " "
+    end
+
+    puts
+    puts
   end
 else
   puts "Invalid input"
