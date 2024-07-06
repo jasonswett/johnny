@@ -16,7 +16,7 @@ RSpec.describe Token do
     end
   end
 
-  context "article" do
+  context "noun followed by article" do
     it "works" do
       token = Token.new(value: "world")
       token.add_context("The world can wait.")
@@ -24,6 +24,17 @@ RSpec.describe Token do
       token.add_context("You're the most beautiful sausage in the world.")
 
       expect(token.parts_of_speech).to eq(noun: 3)
+    end
+  end
+
+  context "article" do
+    it "works" do
+      token = Token.new(value: "the")
+      token.add_context("The world can wait.")
+      token.add_context("The world is yours.")
+      token.add_context("You're the most beautiful sausage in the world.")
+
+      expect(token.part_of_speech).to eq("article")
     end
   end
 

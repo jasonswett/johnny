@@ -44,6 +44,11 @@ class Token < ApplicationRecord
         @parts_of_speech[:personal_pronoun] ||= 0
         @parts_of_speech[:personal_pronoun] += 1
       end
+
+      if PARTS_OF_SPEECH[:article].include?(value)
+        @parts_of_speech[:article] ||= 0
+        @parts_of_speech[:article] += 1
+      end
     end
 
     self.annotations["contexts"].each do |context|
