@@ -174,7 +174,7 @@ class Token < ApplicationRecord
   end
 
   def related_words
-    unacceptable_values = Token.most_frequent_first.limit(1000).map(&:value)
+    unacceptable_values = Token.most_frequent_first.limit(10).map(&:value)
     context_values = Corpus.new(annotations["contexts"].join(" ").downcase).tokens.map(&:value)
     context_values - unacceptable_values
   end
