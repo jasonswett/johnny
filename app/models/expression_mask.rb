@@ -27,8 +27,7 @@ class ExpressionMask
   end
 
   def evaluate
-    @parts_of_speech.map { |part_of_speech| related_token(part_of_speech) || random_token(part_of_speech) }
-      .map { |token| token ? token.value : "?" }
+    tokens.map { |token| token ? token.value : "X" }
       .join(" ")
       .gsub(/\s+([.,!?])/, '\1')
   end
@@ -38,6 +37,12 @@ class ExpressionMask
   end
 
   private
+
+  def tokens
+    @parts_of_speech.map do |part_of_speech|
+      related_token(part_of_speech) || random_token(part_of_speech)
+    end
+  end
 
   def related_token(part_of_speech)
     Token.where("value in (?)", related_words)

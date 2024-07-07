@@ -34,7 +34,7 @@ class BookCollection
     filenames.map { |filename| File.read(filename) }
       .map { |content| Corpus.new(content[0..CONTENT_CHARACTER_LIMIT]) }
       .flat_map(&:sentences).each do |sentence|
-        sentence.tokens.each do |token|
+        sentence.tokens.each_with_index do |token, index|
           attrs = @token_attributes[token.value] || token.serialize
 
           attrs[:annotations][:frequency] ||= 0
@@ -43,6 +43,13 @@ class BookCollection
           attrs[:annotations][:contexts] ||= []
           if attrs[:annotations][:contexts].count < MAX_CONTEXT_COUNT && sentence.to_s.length < MAX_CONTEXT_LENGTH_IN_TOKENS
             attrs[:annotations][:contexts] << sentence.to_s
+          end
+
+          if index > 0
+            previous_token = sentence.tokens[index - 1]
+            @token_attributes[previous_token.value] ||= previous_token.serialize
+            @token_attributes[previous_token.value][:annotations][:followers] ||= []
+            @token_attributes[previous_token.value][:annotations][:followers] << token.value
           end
 
           @token_attributes[token.value] = attrs
