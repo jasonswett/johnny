@@ -9,6 +9,7 @@ class Token < ApplicationRecord
     preposition: %w(in on at by with under over between among through during before after),
     adverb: %w(very quickly slowly silently well badly really always never often sometimes usually),
     verb: %w(is be have do say make go take come see know get give find think tell become show leave feel put bring begin keep hold write stand hear let mean set meet run pay sit speak lie lead read grow lose open walk win teach offer remember consider appear buy serve send expect build stay fall cut reach kill remain suggest raise pass sell require report decide pull return explain hope develop carry break receive agree support hit produce eat cover catch draw choose point),
+    adjective: %w(good new first last long great little own other old right big high different small large next early young important few public bad same able),
 
     colon: %w(:),
     semicolon: %w(;),
@@ -27,6 +28,7 @@ class Token < ApplicationRecord
     preposition
     adverb
     verb
+    adjective
 
     colon
     semicolon
@@ -148,12 +150,14 @@ class Token < ApplicationRecord
         previous_token = tokens[sentence_tokens[index - 1].value]
         next_token = tokens[sentence_tokens[index + 1].value]
 
+        @parts_of_speech[:noun] ||= 0
+        @parts_of_speech[:adjective] ||= 0
+
         if previous_token && previous_token.annotations["part_of_speech"] == "article" &&
             next_token && next_token.annotations["part_of_speech"] == "noun"
-          @parts_of_speech[:noun] ||= 0
-          @parts_of_speech[:noun] -= 0.01
-          @parts_of_speech[:adjective] ||= 0
           @parts_of_speech[:adjective] += 1
+        else
+          @parts_of_speech[:adjective] -= 1
         end
       end
     end
