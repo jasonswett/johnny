@@ -15,10 +15,7 @@ class ExpressionMask
 
     "noun verb adjective exclamation_point",
 
-    "verb pronoun verb question_mark",
-    "verb pronoun verb noun question_mark",
     "verb adjective noun adjective question_mark",
-    "verb noun adjective question_mark",
     "verb noun conjunction noun verb noun question_mark",
   ]
 
