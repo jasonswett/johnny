@@ -223,8 +223,8 @@ class Token < ApplicationRecord
     self.annotations["contexts"].count
   end
 
-  def related
-    context_tokens = Corpus.new(contexts.join(" ").downcase).tokens
+  def self.related(token)
+    context_tokens = Corpus.new(token.contexts.join(" ").downcase).tokens
 
     token_counts = Hash.new(0)
 

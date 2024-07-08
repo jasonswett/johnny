@@ -26,7 +26,7 @@ when "token"
   end
 when "related"
   with_token(ARGV[1]) do |token|
-    puts token.related.map(&:value).join(", ")
+    puts Token.related(token).map(&:value).join(", ")
   end
 when "followers"
   with_token(ARGV[1]) do |token|
@@ -52,7 +52,7 @@ when "label_parts_of_speech"
 when "generate"
   ARGV[2..-1].each do |anchor_word|
     token = Token.find_by(value: anchor_word)
-    related_tokens = token.related
+    related_tokens = Token.related(token)
     puts anchor_word.upcase
 
     ARGV[1].to_i.times do
