@@ -25,15 +25,14 @@ class ExpressionMask
 
   FREQUENCY_THRESHOLD = 1000
 
-  def initialize(mask, anchor_token:, related_tokens:)
+  def initialize(mask, related_tokens:)
     @mask = mask
     @parts_of_speech = mask.split
-    @anchor_token = anchor_token
     @related_tokens = related_tokens
   end
 
-  def self.generate_sentence(anchor_token:, related_tokens:)
-    new(VALID_MASKS.sample, anchor_token:, related_tokens:).evaluate
+  def self.generate_sentence(related_tokens:)
+    new(VALID_MASKS.sample, related_tokens:).evaluate
   end
 
   def evaluate

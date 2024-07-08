@@ -56,7 +56,7 @@ when "generate"
     puts anchor_word.upcase
 
     ARGV[1].to_i.times do
-      print ExpressionMask.generate_sentence(anchor_token: token, related_tokens:) + " "
+      print ExpressionMask.generate_sentence(related_tokens:) + " "
     end
 
     puts
