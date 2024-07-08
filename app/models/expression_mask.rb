@@ -1,26 +1,26 @@
 class ExpressionMask
   VALID_MASKS = [
-    "pronoun verb noun period",
-    "pronoun verb noun conjunction article noun period",
-    "pronoun adverb verb acticle adjective noun period",
-    "pronoun verb pronoun period",
-    "noun conjunction noun verb article noun period",
-    "personal_pronoun adjective noun and personal_pronoun adjective noun verb noun period",
-    "article noun comma article noun conjunction article noun verb noun period",
-    "article adjective noun comma noun conjunction noun verb noun period",
-    "pronoun conjunction pronoun verb period",
-    "adverb comma noun verb preposition adjective noun period",
-    "preposition article adjective noun comma preposition noun comma pronoun verb adverb period",
-    "preposition noun comma adjective noun verb adjective noun period",
-    "adjective conjunction adjective comma noun verb noun period",
-
-    "noun verb adjective exclamation_point",
-    "verb adverb exclamation_point",
-
-    "verb adjective noun adjective question_mark",
-    "verb noun conjunction noun verb noun question_mark",
-    "verb pronoun verb noun conjunction adjective adjective noun question_mark",
-    "verb noun adjective question_mark",
+    "personal_pronoun verb_action noun period",
+    "personal_pronoun verb_action noun coordinating_conjunction definite_article noun period",
+    "personal_pronoun adverb_manner verb_action indefinite_article adjective noun period",
+    "personal_pronoun verb_stative personal_pronoun period",
+    "noun coordinating_conjunction noun verb_transitive definite_article noun period",
+    "personal_pronoun adjective noun coordinating_conjunction personal_pronoun adjective noun verb_action noun period",
+    "definite_article noun comma indefinite_article noun coordinating_conjunction definite_article noun verb_action noun period",
+    "definite_article adjective noun comma noun coordinating_conjunction noun verb_action noun period",
+    "personal_pronoun coordinating_conjunction personal_pronoun verb_action period",
+    "adverb_time comma noun verb_transitive preposition adjective noun period",
+    "preposition definite_article adjective noun comma preposition noun comma personal_pronoun verb_adverb period",
+    "preposition noun comma adjective noun verb_transitive adjective noun period",
+    "adjective coordinating_conjunction adjective comma noun verb_action noun period",
+    
+    "noun verb_action adjective exclamation_point",
+    "verb_action adverb_manner exclamation_point",
+    
+    "verb_action adjective noun adjective question_mark",
+    "verb_transitive noun coordinating_conjunction noun verb_transitive noun question_mark",
+    "verb_transitive personal_pronoun verb_transitive noun coordinating_conjunction adjective adjective noun question_mark",
+    "verb_transitive noun adjective question_mark"
   ]
 
   FREQUENCY_THRESHOLD = 1000

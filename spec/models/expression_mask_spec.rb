@@ -9,7 +9,7 @@ RSpec.describe ExpressionMask do
   end
 
   it "works" do
-    expression_mask = ExpressionMask.new("article noun verb period", anchor_word: "dog")
+    expression_mask = ExpressionMask.new("article noun verb period", related_tokens: Token.none)
     expect(expression_mask.evaluate).to eq("the dog sits.")
   end
 end
