@@ -25,9 +25,8 @@ when "token"
     puts token.details
   end
 when "related"
-  with_token(ARGV[1]) do |token|
-    puts Token.related(token).map(&:value).join(", ")
-  end
+  tokens = Token.where(value: ARGV[1..-1])
+  puts Token.related(tokens).map(&:value).join(", ")
 when "followers"
   with_token(ARGV[1]) do |token|
     puts token.followers.join(", ")
@@ -50,18 +49,16 @@ when "eval"
 when "label_parts_of_speech"
   Token.label_parts_of_speech
 when "generate"
-  ARGV[2..-1].each do |anchor_word|
-    token = Token.find_by(value: anchor_word)
-    related_tokens = Token.related(token)
-    puts anchor_word.upcase
+  puts ARGV[2..-1].map { |value| value.upcase }.join(" AND ")
+  tokens = Token.where(value: ARGV[2..-1])
+  related_tokens = Token.related(tokens)
 
-    ARGV[1].to_i.times do
-      print ExpressionMask.generate_sentence(related_tokens:) + " "
-    end
-
-    puts
-    puts
+  ARGV[1].to_i.times do
+    print ExpressionMask.generate_sentence(related_tokens:) + " "
   end
+
+  puts
+  puts
 else
   puts "Invalid input"
 end

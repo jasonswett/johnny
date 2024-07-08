@@ -223,16 +223,18 @@ class Token < ApplicationRecord
     self.annotations["contexts"].count
   end
 
-  def self.related(token)
-    context_tokens = Corpus.new(token.contexts.join(" ").downcase).tokens
+  def self.related(tokens)
+    common_values = tokens.flat_map do |token|
+      context_tokens = Corpus.new(token.contexts.join(" ").downcase).tokens
 
-    token_counts = Hash.new(0)
+      token_counts = Hash.new(0)
 
-    context_tokens.each do |token|
-      token_counts[token.value] += 1
+      context_tokens.each do |token|
+        token_counts[token.value] += 1
+      end
+
+      token_counts.select { |_, count| count > 1 }.keys
     end
-
-    common_values = token_counts.select { |_, count| count > 1 }.keys
 
     Token.where(value: common_values)
       .least_frequent_first
