@@ -1,22 +1,26 @@
 class ExpressionMask
   VALID_MASKS = [
-    "article adjective noun verb noun period",
-    "noun comma noun and noun verb conjunction verb period",
     "pronoun verb noun period",
     "pronoun verb noun conjunction article noun period",
+    "pronoun adverb verb acticle adjective noun period",
+    "pronoun verb pronoun period",
     "noun conjunction noun verb article noun period",
+    "personal_pronoun adjective noun and personal_pronoun adjective noun verb noun period",
     "article noun comma article noun conjunction article noun verb noun period",
-    "article noun comma noun conjunction noun verb noun period",
+    "article adjective noun comma noun conjunction noun verb noun period",
     "pronoun conjunction pronoun verb period",
-    "adverb comma noun verb preposition noun period",
-    "preposition article noun comma preposition noun comma pronoun verb adverb period",
+    "adverb comma noun verb preposition adjective noun period",
+    "preposition article adjective noun comma preposition noun comma pronoun verb adverb period",
     "preposition noun comma adjective noun verb adjective noun period",
     "adjective conjunction adjective comma noun verb noun period",
 
     "noun verb adjective exclamation_point",
+    "verb adverb exclamation_point",
 
     "verb adjective noun adjective question_mark",
     "verb noun conjunction noun verb noun question_mark",
+    "verb pronoun verb noun conjunction adjective adjective noun question_mark",
+    "verb noun adjective question_mark",
   ]
 
   FREQUENCY_THRESHOLD = 1000
@@ -26,14 +30,26 @@ class ExpressionMask
     @anchor_word = anchor_word
   end
 
+  def self.generate_sentence(anchor_word:)
+    new(VALID_MASKS.sample, anchor_word:).evaluate
+  end
+
   def evaluate
     tokens.map { |token| token ? token.value : "X" }
       .join(" ")
       .gsub(/\s+([.,!?])/, '\1')
   end
 
-  def self.generate_sentence(anchor_word:)
-    new(VALID_MASKS.sample, anchor_word:).evaluate
+  def triplets
+    @parts_of_speech.each_with_index.map do |part_of_speech, index|
+      mask = [
+        part_of_speech,
+        @parts_of_speech[index + 1],
+        @parts_of_speech[index + 2],
+      ].join(" ")
+
+      Triplet.find_by(mask:)
+    end
   end
 
   private
