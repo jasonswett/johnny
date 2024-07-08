@@ -1,6 +1,30 @@
 require "rails_helper"
 
 RSpec.describe Corpus do
+  describe "index" do
+    it "does not create duplicates" do
+      corpus = Corpus.new("the")
+      expect { corpus.index }.to change { Token.count }.by(1)
+
+      corpus = Corpus.new("the")
+      expect { corpus.index }.not_to change { Token.count }
+    end
+
+    it "does not overwrite" do
+      token = Token.create!(
+        value: "water",
+        annotations: {
+          "contexts": ["I drank some water."]
+        }
+      )
+
+      corpus = Corpus.new("water water water")
+      expect { corpus.index }.not_to change { Token.count }
+
+      expect(token.reload.annotations["contexts"]).to include("I drank some water.")
+    end
+  end
+
   describe "sanitization" do
     it "removes \r" do
       corpus = Corpus.new("This is a sentence\r")

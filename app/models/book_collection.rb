@@ -1,19 +1,14 @@
 class BookCollection
-  MAX_CONTEXT_COUNT = 1000
-  MAX_CONTEXT_LENGTH_IN_TOKENS = 50
-  CONTENT_CHARACTER_LIMIT = 10000
+  CONTENT_CHARACTER_LIMIT = 50000
 
   def index!
     print "Deleting existing tokens (#{Token.count})..."
-    delete_tokens
+    Triplet.delete_all
+    Token.delete_all
     puts
 
-    print "Inserting new tokens (#{token_attributes.count})..."
-
-    token_attributes.values.each_slice(1000) do |batch|
-      puts batch.first
-      Token.insert_all(batch)
-    end
+    puts "Inserting new tokens..."
+    token_attributes
 
     puts
     puts "Determining parts of speech..."
@@ -27,36 +22,10 @@ class BookCollection
   private
 
   def token_attributes
-    return @token_attributes if @token_attributes.present?
-
-    @token_attributes = {}
-
-    filenames.map { |filename| File.read(filename) }
-      .map { |content| Corpus.new(content[0..CONTENT_CHARACTER_LIMIT]) }
-      .flat_map(&:sentences).each do |sentence|
-        sentence.tokens.each_with_index do |token, index|
-          attrs = @token_attributes[token.value] || token.serialize
-
-          attrs[:annotations][:frequency] ||= 0
-          attrs[:annotations][:frequency] += 1
-
-          attrs[:annotations][:contexts] ||= []
-          if attrs[:annotations][:contexts].count < MAX_CONTEXT_COUNT && sentence.to_s.length < MAX_CONTEXT_LENGTH_IN_TOKENS
-            attrs[:annotations][:contexts] << sentence.to_s
-          end
-
-          if index > 0
-            previous_token = sentence.tokens[index - 1]
-            @token_attributes[previous_token.value] ||= previous_token.serialize
-            @token_attributes[previous_token.value][:annotations][:followers] ||= []
-            @token_attributes[previous_token.value][:annotations][:followers] << token.value
-          end
-
-          @token_attributes[token.value] = attrs
-        end
-      end
-
-    @token_attributes
+    filenames.each do |filename|
+      content = File.read(filename)
+      Corpus.new(content[0..CONTENT_CHARACTER_LIMIT]).index(filename: File.basename(filename))
+    end
   end
 
   def part_of_speech(value)
@@ -75,12 +44,5 @@ class BookCollection
 
   def filenames
     Dir.glob("#{Rails.root.join("lib", "books")}/*.txt")
-  end
-
-  def delete_tokens
-    Token.find_in_batches do |tokens|
-      print "."
-      Token.where(id: tokens.map(&:id)).delete_all
-    end
   end
 end

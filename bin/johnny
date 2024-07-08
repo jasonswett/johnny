@@ -20,7 +20,12 @@ when "token"
   end
 when "related"
   token = Token.find_by(value: ARGV[1])
-  puts token.related_words.join(", ")
+
+  if token.present?
+    puts token.related_words.join(", ")
+  else
+    puts "No such token '#{ARGV[1]}'"
+  end
 when "pos"
   part_of_speech = ARGV[1]
   Token.part_of_speech(part_of_speech).limit(30).each do |token|
@@ -36,6 +41,8 @@ when "eval"
   parts_of_speech = ARGV[1..-1]
   expression_mask = ExpressionMask.new(parts_of_speech.join(" "))
   puts expression_mask.evaluate
+when "label_parts_of_speech"
+  Token.label_parts_of_speech
 when "generate"
   ARGV[2..-1].each do |anchor_word|
     puts anchor_word.upcase

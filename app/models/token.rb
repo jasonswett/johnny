@@ -1,4 +1,5 @@
 class Token < ApplicationRecord
+  has_many :triplets, dependent: :destroy
   attr_reader :parts_of_speech
 
   PARTS_OF_SPEECH = {
@@ -18,6 +19,17 @@ class Token < ApplicationRecord
     exclamation_point: %w(!),
     comma: %w(,),
     hyphen: %w(-),
+    other_puncuation: [
+      "—",
+      "*",
+      "\"",
+      "'",
+      "(",
+      ")",
+      "[",
+      "]",
+      "_",
+    ]
   }
 
   HIGH_CERTAINTY_PARTS_OF_SPEECH = %i(
@@ -37,6 +49,7 @@ class Token < ApplicationRecord
     exclamation_point
     comma
     hyphen
+    other_puncuation
   )
 
   PART_OF_SPEECH_CONFIDENCE_THRESHOLD = 0.5
@@ -64,7 +77,7 @@ class Token < ApplicationRecord
   end
 
   def serialize
-    {
+    attrs = {
       value: value,
       annotations: annotations || {}
     }
@@ -87,23 +100,48 @@ class Token < ApplicationRecord
     puts "Detecting high-certainty parts of speech..."
     all.most_frequent_first.find_each do |token|
       token.high_certainty_parts_of_speech
-      token.annotations["part_of_speech"] = token.part_of_speech
+      token.annotations["part_of_speech"] = token.part_of_speech_best_guess
       tokens[token.value] = token
     end
 
     puts "Detecting nouns..."
     tokens.each do |_, token|
       token.nouns
-      token.annotations["part_of_speech"] = token.part_of_speech
+      token.annotations["part_of_speech"] = token.part_of_speech_best_guess
       tokens[token.value] = token
     end
 
     puts "Detecting adjectives..."
     tokens.each do |_, token|
       token.adjectives(tokens)
-      token.annotations["part_of_speech"] = token.part_of_speech
+      token.annotations["part_of_speech"] = token.part_of_speech_best_guess
       token.annotations["parts_of_speech"] = token.parts_of_speech
       token.save!
+    end
+  end
+
+  def self.index_triplets
+    Triplet.destroy_all
+    all.each(&:index_triplets)
+  end
+
+  def index_triplets
+    contexts.each do |context|
+      sentence_tokens = Sentence.new(context).tokens
+
+      sentence_tokens.each_with_index do |token, index|
+        next if index >= sentence_tokens.length - 2
+
+        tokens = [token, sentence_tokens[index + 1], sentence_tokens[index + 2]]
+
+        triplet = Triplet.new(
+          token: self,
+          text: tokens.map(&:value).join(" "),
+          mask: tokens.map { |t| Token.find_by(value: t.value) || t }.map(&:part_of_speech).join(" ")
+        )
+
+        triplet.save! if triplet.mask.split.length == 3
+      end
     end
   end
 
@@ -122,6 +160,7 @@ class Token < ApplicationRecord
 
   def nouns
     self.annotations["contexts"].each do |context|
+      print "."
       sentence_tokens = Sentence.new(context).tokens
 
       sentence_tokens.each_with_index do |token, index|
@@ -142,6 +181,7 @@ class Token < ApplicationRecord
 
   def adjectives(tokens)
     self.annotations["contexts"].each do |context|
+      print "."
       sentence_tokens = Sentence.new(context).tokens
 
       sentence_tokens.each_with_index do |token, index|
@@ -157,7 +197,7 @@ class Token < ApplicationRecord
             next_token && next_token.annotations["part_of_speech"] == "noun"
           @parts_of_speech[:adjective] += 1
         else
-          @parts_of_speech[:adjective] -= 1
+          @parts_of_speech[:adjective] -= 0.1
         end
       end
     end
@@ -165,7 +205,7 @@ class Token < ApplicationRecord
     @parts_of_speech
   end
 
-  def part_of_speech
+  def part_of_speech_best_guess
     frontrunner = parts_of_speech.max_by { |_, count| count }
     return unless frontrunner.present?
 
@@ -178,8 +218,20 @@ class Token < ApplicationRecord
   end
 
   def related_words
-    unacceptable_values = Token.most_frequent_first.limit(10).map(&:value)
-    context_values = Corpus.new(annotations["contexts"].join(" ").downcase).tokens.map(&:value)
+    unacceptable_values = Token.most_frequent_first.limit(100).map(&:value)
+    context_values = Corpus.new(contexts.join(" ").downcase).tokens.map(&:value)
     context_values - unacceptable_values
+  end
+
+  def contexts
+    self.annotations["contexts"] || []
+  end
+
+  def followers
+    self.annotations["followers"]
+  end
+
+  def part_of_speech
+    self.annotations["part_of_speech"]
   end
 end

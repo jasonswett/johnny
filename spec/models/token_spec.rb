@@ -83,7 +83,7 @@ RSpec.describe Token do
       token.add_context("You're the most beautiful sausage in the world.")
 
       token.high_certainty_parts_of_speech
-      expect(token.part_of_speech).to eq("article")
+      expect(token.part_of_speech_best_guess).to eq("article")
     end
   end
 
@@ -126,7 +126,67 @@ RSpec.describe Token do
         verb: 30
       )
 
-      expect(token.part_of_speech).to eq("verb")
+      expect(token.part_of_speech_best_guess).to eq("verb")
+    end
+  end
+
+  describe ".index_triplets" do
+    context "valid" do
+      before do
+        Token.create!(value: "down", annotations: { part_of_speech: "preposition" })
+        Token.create!(value: "on", annotations: { part_of_speech: "preposition" })
+        Token.create!(value: "the", annotations: { part_of_speech: "article" })
+      end
+
+      let!(:token) do
+        Token.create!(
+          value: "farm",
+          annotations: {
+            "part_of_speech": "noun",
+            "contexts": ["down on the farm"]
+          }
+        )
+      end
+
+      it "adds triplet text" do
+        token.index_triplets
+
+        expect(Triplet.all.map(&:text)).to match_array([
+          "down on the",
+          "on the farm"
+        ])
+      end
+
+      it "adds triplet masks" do
+        token.index_triplets
+
+        expect(Triplet.all.map(&:mask)).to match_array([
+          "preposition preposition article",
+          "preposition article noun"
+        ])
+      end
+    end
+
+    context "missing parts of speech" do
+      before do
+        Token.create!(value: "down")
+        Token.create!(value: "on")
+        Token.create!(value: "the")
+      end
+
+      let!(:token) do
+        Token.create!(
+          value: "farm",
+          annotations: {
+            "part_of_speech": "noun",
+            "contexts": ["down on the farm"]
+          }
+        )
+      end
+
+      it "does not add triplets" do
+        expect { token.index_triplets }.not_to change { Triplet.count }
+      end
     end
   end
 end
