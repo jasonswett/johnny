@@ -40,18 +40,6 @@ class ExpressionMask
       .gsub(/\s+([.,!?])/, '\1')
   end
 
-  def triplets
-    @parts_of_speech.each_with_index.map do |part_of_speech, index|
-      mask = [
-        part_of_speech,
-        @parts_of_speech[index + 1],
-        @parts_of_speech[index + 2],
-      ].join(" ")
-
-      Triplet.find_by(mask:)
-    end
-  end
-
   private
 
   def tokens
