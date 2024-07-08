@@ -28,6 +28,8 @@ class Token < ApplicationRecord
       ")",
       "[",
       "]",
+      "{",
+      "}",
       "_",
     ]
   }
