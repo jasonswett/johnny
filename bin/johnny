@@ -51,10 +51,12 @@ when "label_parts_of_speech"
   Token.label_parts_of_speech
 when "generate"
   ARGV[2..-1].each do |anchor_word|
+    token = Token.find_by(value: anchor_word)
+    related_tokens = token.related
     puts anchor_word.upcase
 
     ARGV[1].to_i.times do
-      print ExpressionMask.generate_sentence(anchor_word:) + " "
+      print ExpressionMask.generate_sentence(anchor_token: token, related_tokens:) + " "
     end
 
     puts

@@ -217,10 +217,10 @@ class Token < ApplicationRecord
     self.annotations["contexts"].count
   end
 
-  def related_words
-    unacceptable_values = Token.most_frequent_first.limit(10000).map(&:value)
-    context_values = Corpus.new(contexts.join(" ").downcase).tokens.map(&:value)
-    context_values - unacceptable_values
+  def related
+    unacceptable_tokens = Token.most_frequent_first.limit(10000)
+    context_tokens = Corpus.new(contexts.join(" ").downcase).tokens
+    self.class.where(id: (context_tokens.map(&:id) - unacceptable_tokens.map(&:id)))
   end
 
   def contexts

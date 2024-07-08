@@ -25,13 +25,14 @@ class ExpressionMask
 
   FREQUENCY_THRESHOLD = 1000
 
-  def initialize(text, anchor_word:)
+  def initialize(text, anchor_token:, related_tokens:)
     @parts_of_speech = text.split
-    @anchor_word = anchor_word
+    @anchor_token = anchor_token
+    @related_tokens = related_tokens
   end
 
-  def self.generate_sentence(anchor_word:)
-    new(VALID_MASKS.sample, anchor_word:).evaluate
+  def self.generate_sentence(anchor_token:, related_tokens:)
+    new(VALID_MASKS.sample, anchor_token:, related_tokens:).evaluate
   end
 
   def evaluate
@@ -44,24 +45,13 @@ class ExpressionMask
 
   def tokens
     @parts_of_speech.map do |part_of_speech|
-      related_token(part_of_speech) || random_token(part_of_speech)
+      @related_tokens.part_of_speech(part_of_speech).sample || random_tokens(part_of_speech).sample
     end
   end
 
-  def related_token(part_of_speech)
-    Token.where("value in (?)", related_words)
-      .part_of_speech(part_of_speech)
-      .sample
-  end
-
-  def related_words
-    @related_words ||= Token.find_by(value: @anchor_word).related_words
-  end
-
-  def random_token(part_of_speech)
+  def random_tokens(part_of_speech)
     Token.most_frequent_first
       .part_of_speech(part_of_speech)
       .limit(FREQUENCY_THRESHOLD)
-      .sample
   end
 end

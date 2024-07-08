@@ -1,6 +1,13 @@
 require "rails_helper"
 
 RSpec.describe Token do
+  describe "related_tokens" do
+    it "works" do
+      token = Token.new(value: "world")
+      token.related
+    end
+  end
+
   context "no contexts" do
     it "works" do
       token = Token.new(value: "my")
