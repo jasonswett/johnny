@@ -2,6 +2,16 @@
 
 require File.expand_path('../../config/environment', __FILE__)
 
+def with_token(value, &block)
+  token = Token.find_by(value: value)
+
+  if token.present?
+    block.call(token)
+  else
+    puts "No such token '#{value}'. Sorry bro"
+  end
+end
+
 case ARGV[0]
 when "index"
   book_collection = BookCollection.new
@@ -11,20 +21,16 @@ when "tokens"
     puts "#{token.value} (#{token.annotations['frequency']})"
   end
 when "token"
-  token = Token.find_by(value: ARGV[1])
-
-  if token.present?
+  with_token(ARGV[1]) do |token|
     puts token.details
-  else
-    puts "No such token. Sorry bro"
   end
 when "related"
-  token = Token.find_by(value: ARGV[1])
-
-  if token.present?
+  with_token(ARGV[1]) do |token|
     puts token.related_words.join(", ")
-  else
-    puts "No such token '#{ARGV[1]}'"
+  end
+when "followers"
+  with_token(ARGV[1]) do |token|
+    puts token.followers.join(", ")
   end
 when "pos"
   part_of_speech = ARGV[1]
