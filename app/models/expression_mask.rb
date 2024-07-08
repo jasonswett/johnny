@@ -25,8 +25,9 @@ class ExpressionMask
 
   FREQUENCY_THRESHOLD = 1000
 
-  def initialize(text, anchor_token:, related_tokens:)
-    @parts_of_speech = text.split
+  def initialize(mask, anchor_token:, related_tokens:)
+    @mask = mask
+    @parts_of_speech = mask.split
     @anchor_token = anchor_token
     @related_tokens = related_tokens
   end
@@ -44,14 +45,34 @@ class ExpressionMask
   private
 
   def tokens
-    @parts_of_speech.map do |part_of_speech|
-      @related_tokens.part_of_speech(part_of_speech).sample || random_tokens(part_of_speech).sample
+    @tokens = []
+
+    @parts_of_speech.each_with_index do |part_of_speech, index|
+      if index > 0 && @tokens[index - 1].present?
+        @tokens << best_token_following(@tokens[index - 1], part_of_speech)
+      else
+        @tokens << (@related_tokens.part_of_speech(part_of_speech).sample || random_tokens(part_of_speech).sample)
+      end
     end
+
+    @tokens
+  end
+
+  def best_token_following(token, part_of_speech)
+    follower_values = (token.followers || []).uniq
+
+    @related_tokens.part_of_speech(part_of_speech).shuffle.each do |related_token|
+      return related_token if follower_values.include?(related_token.value)
+    end
+
+    random_tokens(part_of_speech).shuffle.each do |random_token|
+      return random_token if follower_values.include?(random_token.value)
+    end
+
+    random_tokens(part_of_speech).sample
   end
 
   def random_tokens(part_of_speech)
-    Token.most_frequent_first
-      .part_of_speech(part_of_speech)
-      .limit(FREQUENCY_THRESHOLD)
+    Token.part_of_speech(part_of_speech)
   end
 end

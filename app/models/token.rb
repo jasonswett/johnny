@@ -58,6 +58,10 @@ class Token < ApplicationRecord
     order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
   end
 
+  scope :least_frequent_first, -> do
+    order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) ASC"))
+  end
+
   scope :part_of_speech, ->(value) do
     where("annotations->>'part_of_speech' = ?", value)
       .order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
@@ -218,9 +222,19 @@ class Token < ApplicationRecord
   end
 
   def related
-    unacceptable_tokens = Token.most_frequent_first.limit(10000)
     context_tokens = Corpus.new(contexts.join(" ").downcase).tokens
-    self.class.where(id: (context_tokens.map(&:id) - unacceptable_tokens.map(&:id)))
+
+    token_counts = Hash.new(0)
+
+    context_tokens.each do |token|
+      token_counts[token.value] += 1
+    end
+
+    common_values = token_counts.select { |_, count| count > 1 }.keys
+
+    Token.where(value: common_values)
+      .least_frequent_first
+      .limit(common_values.size / 2)
   end
 
   def contexts
