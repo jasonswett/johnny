@@ -17,10 +17,12 @@ class PartOfSpeechAnnotation
     adverb_time: %w(always never often sometimes usually already still perhaps almost later soon today yesterday tomorrow now then early late just finally recently lately previously immediately shortly eventually promptly annually monthly daily hourly occasionally frequently rarely constantly regularly seldom continuously perpetually eternally temporarily momentarily instantly repeatedly briefly continuously eternally forever instantly momentarily perpetually previously rapidly temporarily twice weekly yearly tomorrow yesterday today now),
     adverb_place: %w(here there everywhere nowhere somewhere above below inside outside nearby far away home abroad upstairs downstairs underground outside somewhere anywhere nowhere up down near far in out indoors outdoors overhead beyond nearby close beneath beyond elsewhere below above about around between among along over across behind before beside beneath by near next opposite under over against within without at into onto off through throughout past around out over under up down),
     adverb_frequency: %w(always never often sometimes usually frequently rarely occasionally seldom constantly regularly generally typically hardly infrequently normally occasionally rarely regularly seldom sometimes usually weekly yearly),
+    adverb: %w(not),
 
     verb_action: %w(run jump swim eat drink read write sing dance play talk walk listen speak look watch see hear),
-    verb_stative: %w(be seem become appear feel look sound taste smell remain belong consist contain involve include),
-    verb_transitive: %w(see take make find give buy tell bring show send use help teach create receive accept admire appreciate approve attract benefit borrow bring buy catch change choose clean close complete control cover create cut decide describe develop discuss divide draw eat enjoy explain feel finish follow forget forgive get give hear help hit hold hurt identify include introduce join keep kill know learn leave like live look lose love make meet need notice obtain open organize pay perform pick place plan play prepare present produce provide put raise reach receive record remember report require rest return ride run save say see sell send serve set share show sign sing sit sleep speak spend stand start stay stop study suggest take talk teach tell think throw touch train travel turn understand use visit wait walk want watch wear win work write),
+    verb_stative: %w(is are be seem become appear feel look sound taste smell remain belong consist contain involve include),
+    verb_transitive: %w(see take make find give gave buy tell bring show send use help teach create receive accept admire appreciate approve attract benefit borrow bring buy catch change choose clean close complete control cover create cut decide describe develop discuss divide draw eat enjoy explain feel finish follow forget forgive get hear help hit hold hurt identify include introduce join keep kill know learn leave like live look lose love make meet need notice obtain open organize pay perform pick place plan play prepare present produce provide put raise reach receive record remember report require rest return ride run save say said see sell send serve set share show sign sing sit sleep speak spend stand start stay stop study suggest take talk teach tell think throw touch train travel turn understand use visit wait walk want watch wear win work write),
+    verb_auxiliary: %w(can do does did have has had will would shall should may might must can could),
 
     adjective_quality: %w(good bad happy sad fast slow loud quiet bright dark soft hard light heavy warm cool),
     adjective_size: %w(big small large tiny enormous huge massive petite short tall narrow wide gigantic),
@@ -113,12 +115,14 @@ class PartOfSpeechAnnotation
   end
 
   def self.adjectives(tokens)
+    all_tokens_by_value = Token.all.index_by(&:value)
+
     tokens.each do |token|
       counts = {}
 
       token.contexts.each do |context|
         sentence_tokens = Sentence.new(context).tokens
-        tokens_by_value = Token.where(value: sentence_tokens.map(&:value)).index_by(&:value)
+        tokens_by_value = sentence_tokens.map { |t| all_tokens_by_value[t.value] || t }.index_by(&:value)
 
         sentence_tokens.each_with_index do |sentence_token, index|
           next if index == 0 || index >= (sentence_tokens.length - 1) || sentence_token.value != token.value
@@ -129,9 +133,9 @@ class PartOfSpeechAnnotation
           counts[:noun] ||= 0
           counts[:adjective] ||= 0
 
-          if token.value == "great"
-            binding.pry
-          end
+          #if token.value == "great"
+          #  binding.pry
+          #end
 
           if previous_token && %w(definite_article indefinite_article).include?(previous_token.annotations["part_of_speech"]) &&
               next_token && next_token.annotations["part_of_speech"] == "noun"
@@ -143,7 +147,7 @@ class PartOfSpeechAnnotation
       end
 
       token.annotations["part_of_speech_counts"] = counts
-      token.annotations["part_of_speech"] ||= most_likely_part_of_speech(counts)
+      token.annotations["part_of_speech"] = most_likely_part_of_speech(counts)
       puts
       puts token.value
       puts counts
