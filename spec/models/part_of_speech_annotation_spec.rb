@@ -63,7 +63,9 @@ RSpec.describe PartOfSpeechAnnotation do
       token.add_context("The big man ate a big burger.")
 
       PartOfSpeechAnnotation.adjectives([token])
+
       expect(token.annotations["part_of_speech_counts"]["adjective"]).to eq(3)
+      expect(token.part_of_speech).to eq("adjective")
     end
   end
 
@@ -86,7 +88,7 @@ RSpec.describe PartOfSpeechAnnotation do
       token.add_context("my goodness, you're enormous!")
 
       PartOfSpeechAnnotation.high_certainty_parts_of_speech([token])
-      expect(token.annotations["part_of_speech_counts"]).to eq("possessive_pronoun" => 2)
+      expect(token.annotations["part_of_speech_counts"]).to eq("possessive_pronoun" => 200)
     end
 
     it "does not overwrite other annotations" do

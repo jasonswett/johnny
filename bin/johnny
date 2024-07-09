@@ -47,7 +47,7 @@ when "eval"
   expression_mask = ExpressionMask.new(parts_of_speech.join(" "))
   puts expression_mask.evaluate
 when "label_parts_of_speech"
-  Token.label_parts_of_speech
+  PartOfSpeechAnnotation.label_parts_of_speech(Token.all)
 when "generate"
   puts ARGV[2..-1].map { |value| value.upcase }.join(" AND ")
   tokens = Token.where(value: ARGV[2..-1])

@@ -50,28 +50,17 @@ class PartOfSpeechAnnotation
       print "X"
     end
 
-    tokens = {}
-
+    puts
+    puts "Detecting high certainty parts of speech..."
     high_certainty_parts_of_speech(tokens)
 
-    puts "Detecting high-certainty parts of speech..."
-    tokens.find_each do |token|
-    end
-
+    puts
     puts "Detecting nouns..."
-    tokens.each do |_, token|
-      token.nouns
-      token.annotations["part_of_speech"] = token.part_of_speech_best_guess
-      tokens[token.value] = token
-    end
+    nouns(tokens)
 
+    puts
     puts "Detecting adjectives..."
-    tokens.each do |_, token|
-      token.adjectives(tokens)
-      token.annotations["part_of_speech"] = token.part_of_speech_best_guess
-      token.annotations["parts_of_speech"] = token.parts_of_speech
-      token.save!
-    end
+    adjectives(tokens)
   end
 
   def self.high_certainty_parts_of_speech(tokens)
@@ -83,7 +72,7 @@ class PartOfSpeechAnnotation
         PARTS_OF_SPEECH.keys.each do |part_of_speech|
           if PARTS_OF_SPEECH[part_of_speech].include?(token.value)
             counts[part_of_speech] ||= 0
-            counts[part_of_speech] += 1
+            counts[part_of_speech] += 100
           end
         end
       end
@@ -118,36 +107,31 @@ class PartOfSpeechAnnotation
       end
 
       token.annotations["part_of_speech_counts"] = counts
-      token.annotations["part_of_speech"] = most_likely_part_of_speech(counts)
+      token.annotations["part_of_speech"] ||= most_likely_part_of_speech(counts)
       token.save!
     end
   end
 
-  def self.most_likely_part_of_speech(counts)
-    frontrunner = counts.max_by { |_, count| count }
-    return unless frontrunner.present?
-
-    name, count = frontrunner
-    name.to_s
-  end
-
   def self.adjectives(tokens)
     tokens.each do |token|
-      print "a"
       counts = {}
 
       token.contexts.each do |context|
         sentence_tokens = Sentence.new(context).tokens
+        tokens_by_value = Token.where(value: sentence_tokens.map(&:value)).index_by(&:value)
 
         sentence_tokens.each_with_index do |sentence_token, index|
           next if index == 0 || index >= (sentence_tokens.length - 1) || sentence_token.value != token.value
 
-          tokens_by_value = Token.where(value: sentence_tokens.map(&:value)).index_by(&:value)
           previous_token = tokens_by_value[sentence_tokens[index - 1].value]
           next_token = tokens_by_value[sentence_tokens[index + 1].value]
 
           counts[:noun] ||= 0
           counts[:adjective] ||= 0
+
+          if token.value == "great"
+            binding.pry
+          end
 
           if previous_token && %w(definite_article indefinite_article).include?(previous_token.annotations["part_of_speech"]) &&
               next_token && next_token.annotations["part_of_speech"] == "noun"
@@ -159,8 +143,21 @@ class PartOfSpeechAnnotation
       end
 
       token.annotations["part_of_speech_counts"] = counts
-      token.annotations["part_of_speech"] = most_likely_part_of_speech(counts)
+      token.annotations["part_of_speech"] ||= most_likely_part_of_speech(counts)
+      puts
+      puts token.value
+      puts counts
+      puts token.part_of_speech
       token.save!
     end
+  end
+
+  def self.most_likely_part_of_speech(counts)
+    frontrunner = counts.max_by { |_, count| count }
+    return unless frontrunner.present?
+
+    name, count = frontrunner
+    return unless count > 0
+    name.to_s
   end
 end
