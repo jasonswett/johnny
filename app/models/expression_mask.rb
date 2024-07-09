@@ -1,26 +1,16 @@
 class ExpressionMask
   VALID_MASKS = [
-    "personal_pronoun verb_action noun period",
-    "personal_pronoun verb_action noun coordinating_conjunction definite_article noun period",
-    "personal_pronoun adverb_manner verb_action indefinite_article adjective noun period",
-    "personal_pronoun verb_stative personal_pronoun period",
-    "noun coordinating_conjunction noun verb_transitive definite_article noun period",
-    "personal_pronoun adjective noun coordinating_conjunction personal_pronoun adjective noun verb_action noun period",
-    "definite_article noun comma indefinite_article noun coordinating_conjunction definite_article noun verb_action noun period",
-    "definite_article adjective noun comma noun coordinating_conjunction noun verb_action noun period",
-    "personal_pronoun coordinating_conjunction personal_pronoun verb_action period",
-    "adverb_time comma noun verb_transitive preposition adjective noun period",
-    "preposition definite_article adjective noun comma preposition noun comma personal_pronoun verb_adverb period",
-    "preposition noun comma adjective noun verb_transitive adjective noun period",
-    "adjective coordinating_conjunction adjective comma noun verb_action noun period",
-    
-    "noun verb_action adjective exclamation_point",
-    "verb_action adverb_manner exclamation_point",
-    
-    "verb_action adjective noun adjective question_mark",
-    "verb_transitive noun coordinating_conjunction noun verb_transitive noun question_mark",
-    "verb_transitive personal_pronoun verb_transitive noun coordinating_conjunction adjective adjective noun question_mark",
-    "verb_transitive noun adjective question_mark"
+    "adverb_place comma preposition indefinite_article noun comma personal_pronoun verb indefinite_article noun period",
+    "personal_pronoun adverb_time verb definite_article noun period",
+    "definite_article noun verb_stative adjective period",
+    "personal_pronoun verb_stative adjective period",
+    "personal_pronoun verb_stative indefinite_article adjective noun period",
+    "personal_pronoun verb_stative preposition indefinite_article noun period",
+    "verb_stative personal_pronoun adjective question_mark",
+    "verb_stative indefinite_article noun adjective question_mark",
+    "preposition definite_article noun comma preposition indefinite_article adjective noun comma possessive_pronoun adverb_time verb definite_article noun period",
+    "preposition definite_article noun personal_pronoun verb period",
+    "definite_article noun comma definite_article noun coordinating_conjunction definite_article noun verb_auxiliary verb_stative adjective period",
   ]
 
   FREQUENCY_THRESHOLD = 1000
@@ -39,6 +29,17 @@ class ExpressionMask
     tokens.map { |token| token ? token.value : "X" }
       .join(" ")
       .gsub(/\s+([.,!?])/, '\1')
+  end
+
+  def self.parts_of_speech(expression)
+    Sentence.new(expression).tokens.map(&:pull).map(&:part_of_speech)
+  end
+
+  def self.sample_contexts(token)
+    token.contexts
+      .select { |c| c.length < 50 }
+      .shuffle[0..9]
+      .map { |c| ExpressionMask.parts_of_speech(c).join(" ") }
   end
 
   private

@@ -16,7 +16,8 @@ class Token < ApplicationRecord
 
   after_initialize do
     self.annotations ||= {
-      "contexts" => []
+      "contexts" => [],
+      "part_of_speech_counts" => {}
     }
   end
 
@@ -30,6 +31,10 @@ class Token < ApplicationRecord
       value: value,
       annotations: annotations || {}
     }
+  end
+
+  def pull
+    Token.find_by(value: value) || self
   end
 
   def to_s

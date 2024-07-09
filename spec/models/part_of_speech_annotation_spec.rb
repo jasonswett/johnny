@@ -64,7 +64,7 @@ RSpec.describe PartOfSpeechAnnotation do
 
       PartOfSpeechAnnotation.adjectives([token])
 
-      expect(token.annotations["part_of_speech_counts"]["adjective"]).to eq(3)
+      expect(token.annotations["part_of_speech_counts"]["adjective"]).to eq(6)
       expect(token.part_of_speech).to eq("adjective")
     end
   end

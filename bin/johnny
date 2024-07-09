@@ -48,6 +48,10 @@ when "eval"
   puts expression_mask.evaluate
 when "label_parts_of_speech"
   PartOfSpeechAnnotation.label_parts_of_speech(Token.all)
+when "sample_contexts"
+  with_token(ARGV[1]) do |token|
+    puts ExpressionMask.sample_contexts(token)
+  end
 when "generate"
   puts ARGV[2..-1].map { |value| value.upcase }.join(" AND ")
   tokens = Token.where(value: ARGV[2..-1])
