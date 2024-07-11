@@ -1,5 +1,5 @@
 class BookCollection
-  CONTENT_CHARACTER_LIMIT = 200000
+  CONTENT_CHARACTER_LIMIT = 1000
 
   def index!
     print "Deleting existing tokens (#{Token.count})..."
@@ -13,7 +13,7 @@ class BookCollection
     puts
     puts "Determining parts of speech..."
 
-    Token.label_parts_of_speech
+    PartOfSpeechAnnotation.label_parts_of_speech
 
     puts
     puts "Done"

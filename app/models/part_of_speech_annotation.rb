@@ -72,7 +72,7 @@ class PartOfSpeechAnnotation
 
   def self.exact_matches(tokens)
     tokens.each do |token|
-      print "h"
+      print "e"
       counts = token.annotations["part_of_speech_counts"]
 
       token.annotations["contexts"].each do |context|
