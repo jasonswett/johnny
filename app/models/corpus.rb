@@ -3,7 +3,7 @@ class Corpus
   MAX_CONTEXT_LENGTH_IN_TOKENS = 500
 
   def initialize(content)
-    @content = content.gsub(/\r/, "").gsub(/\n/, " ")
+    @content = content.gsub(/\r/, "").gsub(/\n/, " ").gsub(/_/, "")
   end
 
   def tokens
