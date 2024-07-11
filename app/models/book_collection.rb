@@ -1,9 +1,8 @@
 class BookCollection
-  CONTENT_CHARACTER_LIMIT = 1000
+  CONTENT_CHARACTER_LIMIT = 5000
 
   def index!
     print "Deleting existing tokens (#{Token.count})..."
-    Triplet.delete_all
     Token.delete_all
     puts
 
@@ -12,8 +11,7 @@ class BookCollection
 
     puts
     puts "Determining parts of speech..."
-
-    PartOfSpeechAnnotation.label_parts_of_speech
+    PartOfSpeechAnnotation.label_parts_of_speech(Token.all)
 
     puts
     puts "Done"
