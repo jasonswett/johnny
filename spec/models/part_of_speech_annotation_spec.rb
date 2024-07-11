@@ -4,7 +4,7 @@ RSpec.describe PartOfSpeechAnnotation do
   context "no contexts" do
     it "works" do
       token = Token.create!(value: "my")
-      PartOfSpeechAnnotation.high_certainty_parts_of_speech([token])
+      PartOfSpeechAnnotation.exact_matches([token])
       expect(token.annotations["part_of_speech_counts"]).to eq({})
     end
   end
@@ -17,7 +17,7 @@ RSpec.describe PartOfSpeechAnnotation do
       token.add_context("You're the most beautiful sausage in the world.")
 
       PartOfSpeechAnnotation.nouns([token])
-      expect(token.annotations["part_of_speech_counts"]).to eq("noun" => 3)
+      expect(token.annotations["part_of_speech_counts"]).to eq("NN" => 3)
     end
   end
 
@@ -36,23 +36,23 @@ RSpec.describe PartOfSpeechAnnotation do
       {
         "the" => Token.create!(
           value: "the",
-          annotations: { part_of_speech: "definite_article" }
+          annotations: { part_of_speech: "DT" }
         ),
         "a" => Token.create!(
           value: "a",
-          annotations: { part_of_speech: "indefinite_article" }
+          annotations: { part_of_speech: "DT" }
         ),
         "dog" => Token.create!(
           value: "dog",
-          annotations: { part_of_speech: "noun" }
+          annotations: { part_of_speech: "NN" }
         ),
         "man" => Token.create!(
           value: "man",
-          annotations: { part_of_speech: "noun" }
+          annotations: { part_of_speech: "NN" }
         ),
         "burger" => Token.create!(
           value: "burger",
-          annotations: { part_of_speech: "noun" }
+          annotations: { part_of_speech: "NN" }
         )
       }
     end
@@ -64,20 +64,20 @@ RSpec.describe PartOfSpeechAnnotation do
 
       PartOfSpeechAnnotation.adjectives([token])
 
-      expect(token.annotations["part_of_speech_counts"]["adjective"]).to eq(6)
-      expect(token.part_of_speech).to eq("adjective")
+      expect(token.annotations["part_of_speech_counts"]["JJ"]).to eq(6)
+      expect(token.part_of_speech).to eq("JJ")
     end
   end
 
-  context "article" do
+  context "determiner" do
     it "works" do
       token = Token.new(value: "the")
       token.add_context("The world can wait.")
       token.add_context("The world is yours.")
       token.add_context("You're the most beautiful sausage in the world.")
 
-      PartOfSpeechAnnotation.high_certainty_parts_of_speech([token])
-      expect(token.part_of_speech).to eq("definite_article")
+      PartOfSpeechAnnotation.exact_matches([token])
+      expect(token.part_of_speech).to eq("DT")
     end
   end
 
@@ -87,14 +87,14 @@ RSpec.describe PartOfSpeechAnnotation do
       token.add_context("my bologna has a first name.")
       token.add_context("my goodness, you're enormous!")
 
-      PartOfSpeechAnnotation.high_certainty_parts_of_speech([token])
-      expect(token.annotations["part_of_speech_counts"]).to eq("possessive_pronoun" => 200)
+      PartOfSpeechAnnotation.exact_matches([token])
+      expect(token.annotations["part_of_speech_counts"]).to eq("PRP$" => 200)
     end
 
     it "does not overwrite other annotations" do
       token = Token.new(value: "my")
       token.annotations["frequency"] = 100
-      PartOfSpeechAnnotation.high_certainty_parts_of_speech([token])
+      PartOfSpeechAnnotation.exact_matches([token])
       expect(token.annotations["frequency"]).to eq(100)
     end
   end
@@ -107,7 +107,7 @@ RSpec.describe PartOfSpeechAnnotation do
       token.add_context("your truck is okay")
 
       PartOfSpeechAnnotation.nouns([token])
-      expect(token.annotations["part_of_speech_counts"]).to eq("noun" => 3)
+      expect(token.annotations["part_of_speech_counts"]).to eq("NN" => 3)
     end
   end
 end
