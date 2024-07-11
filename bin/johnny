@@ -53,16 +53,20 @@ when "sample_contexts"
     puts ExpressionMask.sample_contexts(token)
   end
 when "generate"
-  puts ARGV[2..-1].map { |value| value.upcase }.join(" AND ")
-  tokens = Token.where(value: ARGV[2..-1])
-  related_tokens = Token.related(tokens)
+  sentence_count = ARGV[1].to_i
 
-  ARGV[1].to_i.times do
-    print ExpressionMask.generate_sentence(related_tokens:) + " "
+  ARGV[2..-1].each do |value|
+    token = Token.find_by(value: value)
+    puts token.value.upcase
+
+    sentence_count.times do
+      related_tokens = Token.related([token])
+      print ExpressionMask.generate_sentence(related_tokens:) + " "
+    end
+
+    puts
+    puts
   end
-
-  puts
-  puts
 else
   puts "Invalid input"
 end

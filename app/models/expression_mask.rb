@@ -1,16 +1,20 @@
 class ExpressionMask
   VALID_MASKS = [
+    "preposition definite_article noun comma personal_pronoun verb indefinite_article adjective noun period",
     "adverb_place comma preposition indefinite_article noun comma personal_pronoun verb indefinite_article noun period",
     "personal_pronoun adverb_time verb definite_article noun period",
     "definite_article noun verb_stative adjective period",
+    "definite_article noun verb_stative preposition indefinite_article noun period",
     "personal_pronoun verb_stative adjective period",
     "personal_pronoun verb_stative indefinite_article adjective noun period",
     "personal_pronoun verb_stative preposition indefinite_article noun period",
+    "personal_pronoun verb preposition indefinite_article noun period",
     "verb_stative personal_pronoun adjective question_mark",
     "verb_stative indefinite_article noun adjective question_mark",
     "preposition definite_article noun comma preposition indefinite_article adjective noun comma possessive_pronoun adverb_time verb definite_article noun period",
     "preposition definite_article noun personal_pronoun verb period",
     "definite_article noun comma definite_article noun coordinating_conjunction definite_article noun verb_auxiliary verb_stative adjective period",
+    "definite_article noun verb_auxiliary adverb verb preposition definite_article noun period",
   ]
 
   FREQUENCY_THRESHOLD = 1000

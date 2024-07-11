@@ -92,7 +92,7 @@ class Token < ApplicationRecord
 
     Token.where(value: common_values)
       .least_frequent_first
-      .limit(common_values.size / 2)
+      .limit(common_values.size / 3)
   end
 
   def contexts
