@@ -21,6 +21,35 @@ RSpec.describe PartOfSpeechAnnotation do
     end
   end
 
+  context "after auxilliary verb" do
+    before do
+      Token.create!(
+        value: "could",
+        annotations: { part_of_speech: "MD" }
+      )
+
+      Token.create!(
+        value: "must",
+        annotations: { part_of_speech: "MD" }
+      )
+
+      Token.create!(
+        value: "will",
+        annotations: { part_of_speech: "MD" }
+      )
+    end
+
+    it "works" do
+      token = Token.new(value: "go")
+      token.add_context("We could go today.")
+      token.add_context("You must go.")
+      token.add_context("I will go.")
+
+      PartOfSpeechAnnotation.verbs([token])
+      expect(token.annotations["part_of_speech_counts"]).to eq("VB" => 6)
+    end
+  end
+
   context "end" do
     it "works" do
       token = Token.new(value: "big")

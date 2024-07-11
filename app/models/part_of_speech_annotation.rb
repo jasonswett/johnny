@@ -17,7 +17,7 @@ class PartOfSpeechAnnotation
     NNPS: %w(Johns Marys Londons Parises IBMs Microsofts Googles Amazons Facebooks), # Proper noun, plural
     PDT: %w(all any some every both half many such), # Predeterminer
     POS: %w('s), # Possessive ending
-    PRP: %w(I you he she we they me us him her), # Personal pronoun
+    PRP: %w(i you he she we they me us him her), # Personal pronoun
     "PRP$": %w(my your our their his her its), # Possessive pronoun
     RB: %w(quickly slowly carefully quietly loudly happily sadly gently firmly easily barely suddenly always never often sometimes usually rarely where here there everywhere nowhere somewhere above below inside outside nearby far away home abroad upstairs downstairs underground), # Adverb
     RBR: %w(more less better worse faster slower higher lower closer further), # Adverb, comparative
@@ -64,6 +64,10 @@ class PartOfSpeechAnnotation
     puts
     puts "Detecting nouns..."
     nouns(tokens)
+
+    puts
+    puts "Detecting verbs..."
+    verbs(tokens)
 
     puts
     puts "Detecting adjectives..."
@@ -114,6 +118,34 @@ class PartOfSpeechAnnotation
       token.annotations["part_of_speech_counts"] = counts
       token.annotations["part_of_speech"] = most_likely_part_of_speech(token.annotations["part_of_speech_counts"])
       token.save!
+    end
+  end
+
+  def self.verbs(tokens)
+    all_tokens_by_value = Token.all.index_by(&:value)
+
+    tokens.each do |token|
+      print "v"
+      counts = token.annotations["part_of_speech_counts"]
+
+      token.contexts.each do |context|
+        sentence_tokens = Sentence.new(context).tokens
+        tokens_by_value = sentence_tokens.map { |t| all_tokens_by_value[t.value] || t }.index_by(&:value)
+
+        sentence_tokens.each_with_index do |sentence_token, index|
+          next if index == 0 || index >= (sentence_tokens.length - 1) || sentence_token.value != token.value
+
+          previous_token = tokens_by_value[sentence_tokens[index - 1].value]
+
+          counts["VB"] ||= 0
+
+          if previous_token && previous_token.annotations["part_of_speech"] == "MD"
+            counts["VB"] += 2
+          else
+            counts["VB"] -= 0.1
+          end
+        end
+      end
     end
   end
 
