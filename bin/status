@@ -5,5 +5,5 @@ require File.expand_path('../../config/environment', __FILE__)
 while true do
   puts Token.count
 
-  sleep(10)
+  sleep(5)
 end
