@@ -2,29 +2,8 @@
 
 require File.expand_path('../../config/environment', __FILE__)
 
-def related(value)
-  token = Token.find_by(value: value)
-
-  if token.present?
-    token.related_words.join(", ")
-  else
-    "No such token '#{value}'"
-  end
-end
-
 while true do
-  puts "-" * 16
   puts Token.count
-  puts ARGV[0..-1].join(" ")
-  puts
-
-  ARGV[0..-1].each do |value|
-    puts related(value)
-    puts
-  end
-
-  puts Token.count
-  puts
 
   sleep(10)
 end
