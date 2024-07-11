@@ -36,6 +36,13 @@ when "pos"
   Token.part_of_speech(part_of_speech).limit(30).each do |token|
     puts "#{token.value} (#{token.annotations['frequency']})"
   end
+when "relabel"
+  token_value, part_of_speech = ARGV[1], ARGV[2]
+  token = Token.find_by(value: token_value)
+  puts token.part_of_speech
+  token.annotations["part_of_speech"] = part_of_speech
+  token.save!
+  puts token.part_of_speech
 when "analyze"
   words = ARGV[1..-1]
   sentence = Sentence.new(words.join(" "))

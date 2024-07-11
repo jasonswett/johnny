@@ -33,8 +33,8 @@ class PartOfSpeechAnnotation
     VBG: %w(running jumping swimming eating drinking reading writing singing dancing playing talking walking listening speaking looking watching seeing hearing), # Verb, gerund or present participle
     VBN: %w(run jumped swum eaten drunk read written sung danced played talked walked listened spoken looked watched seen heard), # Verb, past participle
     VBP: %w(run jump swim eat drink read write sing dance play talk walk listen speak look watch see hear), # Verb, non-3rd person singular present
-    VBZ: %w(runs jumps swims eats drinks reads writes sings dances plays talks walks listens speaks looks watches sees hears), # Verb, 3rd person singular present
-    WDT: %w(which that what whatever whichever), # Wh-determiner
+    VBZ: %w(is runs jumps swims eats drinks reads writes sings dances plays talks walks listens speaks looks watches sees hears), # Verb, 3rd person singular present
+    WDT: %w(which that whatever whichever), # Wh-determiner
     WP: %w(who whom what which whose), # Wh-pronoun
     "WP$": %w(whose), # Possessive wh-pronoun
     WRB: %w(where when why how wherever whenever however), # Wh-adverb
