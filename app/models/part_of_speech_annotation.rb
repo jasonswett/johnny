@@ -1,4 +1,6 @@
 class PartOfSpeechAnnotation
+  # https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
+
   PARTS_OF_SPEECH = {
     CC: %w(and but or nor for so yet both either neither not only but also), # Coordinating conjunction
     CD: %w(one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty hundred thousand million billion), # Cardinal number
@@ -64,6 +66,10 @@ class PartOfSpeechAnnotation
     puts
     puts "Detecting nouns..."
     nouns(tokens)
+
+    puts
+    puts "Detecting adverbs..."
+    adverbs(tokens)
 
     puts
     puts "Detecting verbs..."
@@ -146,6 +152,30 @@ class PartOfSpeechAnnotation
           end
         end
       end
+
+      token.annotations["part_of_speech_counts"] = counts
+      token.annotations["part_of_speech"] = most_likely_part_of_speech(token.annotations["part_of_speech_counts"])
+      token.save!
+    end
+  end
+
+  def self.adverbs(tokens)
+    all_tokens_by_value = Token.all.index_by(&:value)
+
+    tokens.each do |token|
+      print "RB"
+      counts = token.annotations["part_of_speech_counts"]
+      counts["RB"] ||= 0
+
+      if token.value.end_with?("ly")
+        counts["RB"] += 2
+      else
+        counts["RB"] -= 0.1
+      end
+
+      token.annotations["part_of_speech_counts"] = counts
+      token.annotations["part_of_speech"] = most_likely_part_of_speech(token.annotations["part_of_speech_counts"])
+      token.save!
     end
   end
 

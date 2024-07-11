@@ -9,6 +9,15 @@ RSpec.describe PartOfSpeechAnnotation do
     end
   end
 
+  context "words ending in ly" do
+    it "works" do
+      token = Token.new(value: "crappily")
+
+      PartOfSpeechAnnotation.adverbs([token])
+      expect(token.annotations["part_of_speech_counts"]).to eq("RB" => 2)
+    end
+  end
+
   context "noun followed by article" do
     it "works" do
       token = Token.new(value: "world")
