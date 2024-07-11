@@ -15,6 +15,8 @@ class ExpressionMask
     "IN DT NN PRP VB period",
     "DT NN comma DT NN CC DT NN MD VBZ JJ period",
     "DT NN MD RB VB IN DT NN period",
+
+    "DT NN IN PRP$ NN period",
   ]
 
   FREQUENCY_THRESHOLD = 1000
@@ -36,7 +38,10 @@ class ExpressionMask
   end
 
   def self.parts_of_speech(expression)
-    Sentence.new(expression).tokens.map(&:pull).map(&:part_of_speech)
+    Sentence.new(expression)
+      .tokens
+      .map(&:pull)
+      .map { |t| t.part_of_speech || "X" }
   end
 
   def self.sample_contexts(token)
