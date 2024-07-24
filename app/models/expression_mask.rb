@@ -9,12 +9,15 @@ class ExpressionMask
     "PRP VBZ DT JJ NN period",
     "PRP VBZ IN DT NN period",
     "PRP VB IN DT NN period",
-    "VBZ PRP JJ question_mark",
-    "VBZ DT NN JJ question_mark",
-    "IN DT NN comma IN DT JJ NN comma PRP$ RB VB DT NN period",
     "IN DT NN PRP VB period",
-    "DT NN comma DT NN CC DT NN MD VBZ JJ period",
+    "DT NN comma DT NN CC DT NN VBZ JJ period",
     "DT NN MD RB VB IN DT NN period",
+    "WP VBZ NN question_mark",
+    "MD DT NN VB question_mark",
+    "DT NN VBZ JJ CC DT NN VBZ JJ period",
+    "PRP VBZ DT NN CC DT NN period",
+    "DT NN VBZ JJ CC JJ period",
+    "DT NN VBZ IN DT NN period",
   ]
 
   FREQUENCY_THRESHOLD = 1000
@@ -80,6 +83,6 @@ class ExpressionMask
   end
 
   def random_tokens(part_of_speech)
-    Token.part_of_speech(part_of_speech)
+    Token.part_of_speech(part_of_speech).most_frequent_first
   end
 end

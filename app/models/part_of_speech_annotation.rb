@@ -21,7 +21,7 @@ class PartOfSpeechAnnotation
     POS: %w('s), # Possessive ending
     PRP: %w(i you he she we they me us him her), # Personal pronoun
     "PRP$": %w(my your our their his her its), # Possessive pronoun
-    RB: %w(quickly slowly carefully quietly loudly happily sadly gently firmly easily barely suddenly always never often sometimes usually rarely where here there everywhere nowhere somewhere above below inside outside nearby far away home abroad upstairs downstairs underground), # Adverb
+    RB: %w(very quickly slowly carefully quietly loudly happily sadly gently firmly easily barely suddenly always never often sometimes usually rarely where here there everywhere nowhere somewhere above below inside outside nearby far away home abroad upstairs downstairs underground), # Adverb
     RBR: %w(more less better worse faster slower higher lower closer further), # Adverb, comparative
     RBS: %w(most least best worst fastest slowest highest lowest closest furthest), # Adverb, superlative
     RP: %w(off up down out in on over under away around back forward), # Particle
