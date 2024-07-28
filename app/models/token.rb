@@ -1,5 +1,5 @@
 class Token < ApplicationRecord
-  has_many :triplets, dependent: :destroy
+  has_many :part_of_speech_tags
 
   scope :most_frequent_first, -> do
     order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
@@ -122,5 +122,9 @@ class Token < ApplicationRecord
 
   def part_of_speech
     self.annotations["part_of_speech"]
+  end
+
+  def parts_of_speech
+    part_of_speech_tags.map(&:part_of_speech)
   end
 end

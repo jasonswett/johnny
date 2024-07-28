@@ -55,15 +55,14 @@ when "relabel"
 when "analyze"
   words = ARGV[1..-1]
   sentence = Sentence.new(words.join(" "))
-  tokens = sentence.tokens.map { |token| Token.find_by(value: token.value) || token }
-  parts_of_speech = tokens.map { |token| token.annotations["part_of_speech"] || "?" }
-  puts parts_of_speech.join(" ")
+  puts sentence.tokens.flat_map(&:parts_of_speech).join(" ")
 when "eval"
   parts_of_speech = ARGV[1..-1]
   expression_mask = ExpressionMask.new(parts_of_speech.join(" "))
   puts expression_mask.evaluate
-when "label_parts_of_speech"
-  PartOfSpeechAnnotation.label_parts_of_speech(Token.all)
+when "tag_parts_of_speech"
+  PartOfSpeechTag.delete_all
+  PartOfSpeechTag.tag_all
 when "sample_contexts"
   with_token(ARGV[1]) do |token|
     puts ExpressionMask.sample_contexts(token)

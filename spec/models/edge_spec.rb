@@ -26,7 +26,7 @@ RSpec.describe Edge do
       it "increments the count" do
         sentence = Sentence.new("one two one two")
         edge = sentence.edges.first
-        expect(edge.count).to eq(2)
+        expect(edge.reload.count).to eq(2)
       end
     end
   end
