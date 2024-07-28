@@ -79,24 +79,8 @@ when "generate"
   count.times do
     puts ExpressionMask.generate_sentence(related_tokens: token.related)
   end
-
-  if false
-  ARGV[2..-1].each do |value|
-    #token = Token.all.sample
-    token = Token.f(value)
-
-    count.times do
-      next unless token.present?
-      print "#{token} "
-      edge = token.edges.order("distance asc, count desc")[0..4].sample
-      next unless edge.present?
-      next if edge.token_2.value == edge.token_1.value
-      next if edge.token_2.value == token.value
-      token = edge.token_2
-    end
-    puts
-  end
-  end
+when "chain"
+  TokenChain.generate
 else
   puts "Invalid input"
 end
