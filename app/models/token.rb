@@ -10,8 +10,7 @@ class Token < ApplicationRecord
   end
 
   scope :part_of_speech, ->(value) do
-    where("annotations->>'part_of_speech' = ?", value)
-      .order(Arel.sql("CAST(annotations->>'frequency' AS INTEGER) DESC"))
+    joins(:part_of_speech_tags).where("part_of_speech_tags.part_of_speech = ?", value)
   end
 
   after_initialize do
@@ -22,7 +21,7 @@ class Token < ApplicationRecord
   end
 
   def edges
-    Edge.where(token_1: self)
+    Edge.where(token_1: self).order("distance asc, count desc")
   end
 
   def self.f(v)
@@ -92,11 +91,11 @@ class Token < ApplicationRecord
   end
 
   def followers
-    self.annotations["followers"]
+    Token.where(id: edges.map(&:token_2_id))
   end
 
   def part_of_speech
-    self.annotations["part_of_speech"]
+    parts_of_speech.sample
   end
 
   def parts_of_speech

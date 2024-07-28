@@ -1,10 +1,13 @@
 class PartOfSpeechTag < ApplicationRecord
   belongs_to :token
 
+  # https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
   PARTS_OF_SPEECH = {
     CC: %w(and but or nor for so yet both either neither not only but also), # Coordinating conjunction
+    and: %w(and),
     CD: %w(one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty hundred thousand million billion), # Cardinal number
     DT: %w(the a an this that these those every each either neither), # Determiner
+    DTC: %w(the a an), # Determiner, common
     EX: %w(there), # Existential there
     FW: %w(via de la et le), # Foreign word
     IN: %w(in on at by of with without under over between among through during before after around across against from to although after before because if since unless until when while whereas as though than), # Preposition or subordinating conjunction
@@ -13,7 +16,7 @@ class PartOfSpeechTag < ApplicationRecord
     JJS: %w(best worst fastest slowest highest lowest strongest weakest oldest youngest), # Adjective, superlative
     LS: %w(1 2 3 4 5 a b c d e i ii iii iv v), # List item marker
     MD: %w(can could may might must shall should will would), # Modal
-    NN: %w(cat dog house car tree book phone computer table chair), # Noun, singular or mass
+    NN: %w(cat dog house car tree book phone computer table chair united project standard telephone fox most lion steel man new same oil first world work greatest american great foundation civil wolf terms western other two fables country old metropolitan ass public whole full present use early bell war fact one men great same two syndicates pipe roads contracts companies enterprises efforts words agents certificates advantages steel days refiners five requirements works dividends things establishments pioneers four),
     NNS: %w(cats dogs houses cars trees books phones computers tables chairs), # Noun, plural
     NNP: %w(John Mary London Paris IBM Microsoft Google Amazon Facebook), # Proper noun, singular
     NNPS: %w(Johns Marys Londons Parises IBMs Microsofts Googles Amazons Facebooks), # Proper noun, plural
@@ -34,6 +37,7 @@ class PartOfSpeechTag < ApplicationRecord
     VBN: %w(run jumped swum eaten drunk read written sung danced played talked walked listened spoken looked watched seen heard), # Verb, past participle
     VBP: %w(run jump swim eat drink read write sing dance play talk walk listen speak look watch see hear), # Verb, non-3rd person singular present
     VBZ: %w(is runs jumps swims eats drinks reads writes sings dances plays talks walks listens speaks looks watches sees hears), # Verb, 3rd person singular present
+    VBL: %w(is was are were),
     WDT: %w(which that whatever whichever), # Wh-determiner
     WP: %w(who whom what which whose), # Wh-pronoun
     "WP$": %w(whose), # Possessive wh-pronoun

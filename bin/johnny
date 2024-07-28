@@ -69,9 +69,14 @@ when "sample_contexts"
   end
 when "generate"
   count = ARGV[1].to_i
-  puts "tokens: #{Token.count}"
-  puts "edges: #{Edge.count}"
+  #puts "tokens: #{Token.count}"
+  #puts "edges: #{Edge.count}"
 
+  count.times do
+    puts ExpressionMask.generate_sentence(related_tokens: Token.all)
+  end
+
+  if false
   ARGV[2..-1].each do |value|
     #token = Token.all.sample
     token = Token.f(value)
@@ -86,6 +91,7 @@ when "generate"
       token = edge.token_2
     end
     puts
+  end
   end
 else
   puts "Invalid input"
