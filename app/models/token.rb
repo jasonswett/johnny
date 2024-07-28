@@ -65,31 +65,6 @@ class Token < ApplicationRecord
     ].join("\n")
   end
 
-  def self.index_triplets
-    Triplet.destroy_all
-    all.each(&:index_triplets)
-  end
-
-  def index_triplets
-    contexts.each do |context|
-      sentence_tokens = Sentence.new(context).tokens
-
-      sentence_tokens.each_with_index do |token, index|
-        next if index >= sentence_tokens.length - 2
-
-        tokens = [token, sentence_tokens[index + 1], sentence_tokens[index + 2]]
-
-        triplet = Triplet.new(
-          token: self,
-          text: tokens.map(&:value).join(" "),
-          mask: tokens.map { |t| Token.find_by(value: t.value) || t }.map(&:part_of_speech).join(" ")
-        )
-
-        triplet.save! if triplet.mask.split.length == 3
-      end
-    end
-  end
-
   def context_count
     self.annotations["contexts"].count
   end
