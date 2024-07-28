@@ -23,6 +23,7 @@ class PartOfSpeechTag < ApplicationRecord
     PDT: %w(all any some every both half many such), # Predeterminer
     POS: %w('s), # Possessive ending
     PRP: %w(i you he she we they me us him her), # Personal pronoun
+    PRPS: %w(i you he she we they), # Personal pronoun that can start a sentence
     "PRP$": %w(my your our their his her its), # Possessive pronoun
     RB: %w(very quickly slowly carefully quietly loudly happily sadly gently firmly easily barely suddenly always never often sometimes usually rarely where here there everywhere nowhere somewhere above below inside outside nearby far away home abroad upstairs downstairs underground), # Adverb
     RBR: %w(more less better worse faster slower higher lower closer further), # Adverb, comparative
@@ -70,6 +71,15 @@ class PartOfSpeechTag < ApplicationRecord
           unique_by: [:token_id, :part_of_speech]
         )
       end
+    end
+  end
+
+  def self.following_the
+    Token.f("the").followers[0..999].each do |token|
+      upsert(
+        { token_id: token.id, part_of_speech: "NN" },
+        unique_by: [:token_id, :part_of_speech]
+      )
     end
   end
 end

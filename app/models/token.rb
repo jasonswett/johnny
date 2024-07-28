@@ -21,7 +21,13 @@ class Token < ApplicationRecord
   end
 
   def edges
-    Edge.where(token_1: self).order("distance asc, count desc")
+    Edge.where(token_1: self, distance: 1).order("count desc")
+  end
+
+  def common_edges
+    Edge.where(token_1: self, distance: 1)
+      .where("count >= 2")
+      .order("count desc")
   end
 
   def self.f(v)
@@ -69,29 +75,18 @@ class Token < ApplicationRecord
   end
 
   def self.related(tokens)
-    common_values = tokens.flat_map do |token|
-      context_tokens = Corpus.new(token.contexts.join(" ").downcase).tokens
-
-      token_counts = Hash.new(0)
-
-      context_tokens.each do |token|
-        token_counts[token.value] += 1
-      end
-
-      token_counts.select { |_, count| count > 1 }.keys
-    end
-
-    Token.where(value: common_values)
-      .least_frequent_first
-      .limit(common_values.size / 3)
   end
 
   def contexts
     self.annotations["contexts"] || []
   end
 
-  def followers
-    Token.where(id: edges.map(&:token_2_id))
+  def followers(pos = nil)
+    if pos
+      common_edges.part_of_speech(pos).map(&:token_2)
+    else
+      common_edges.map(&:token_2)
+    end
   end
 
   def part_of_speech

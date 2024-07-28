@@ -38,12 +38,12 @@ when "related"
   puts Token.related(tokens).map(&:value).join(", ")
 when "followers"
   with_token(ARGV[1]) do |token|
-    puts token.followers.join(", ")
+    puts token.followers.join("\n")
   end
 when "pos"
   part_of_speech = ARGV[1]
-  Token.part_of_speech(part_of_speech).limit(30).each do |token|
-    puts "#{token.value} (#{token.annotations['frequency']})"
+  Token.part_of_speech(part_of_speech).each do |token|
+    puts "#{token.value}"
   end
 when "relabel"
   token_value, part_of_speech = ARGV[1], ARGV[2]
@@ -63,6 +63,7 @@ when "eval"
 when "tag_parts_of_speech"
   PartOfSpeechTag.delete_all
   PartOfSpeechTag.tag_all
+  PartOfSpeechTag.following_the
 when "sample_contexts"
   with_token(ARGV[1]) do |token|
     puts ExpressionMask.sample_contexts(token)
@@ -71,6 +72,8 @@ when "generate"
   count = ARGV[1].to_i
   #puts "tokens: #{Token.count}"
   #puts "edges: #{Edge.count}"
+
+  PartOfSpeechTag.following_the
 
   count.times do
     puts ExpressionMask.generate_sentence(related_tokens: Token.all)

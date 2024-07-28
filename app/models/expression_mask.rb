@@ -1,10 +1,13 @@
 class ExpressionMask
   VALID_MASKS = [
     "DTC NN VBL JJ period",
-    "DTC NN VBL JJ and JJ period",
+    "DTC NN VBL DTC JJ NN period",
+    "VBL DTC NN JJ question_mark",
+    "PRPS VBL DTC JJ NN period",
+    "PRPS VBL IN DTC NN period",
+    "PRPS MD VB period",
+    "DTC JJR VBL NN period",
   ]
-
-  FREQUENCY_THRESHOLD = 1000
 
   def initialize(mask, related_tokens:)
     @mask = mask
@@ -39,10 +42,10 @@ class ExpressionMask
   end
 
   def best_token_following(token, part_of_speech)
-    tokens = token.followers.part_of_speech(part_of_speech)
+    tokens = token.followers(part_of_speech)
 
     #raise "No token to follow \"#{token}\""
 
-    tokens[0..4].sample || Token.part_of_speech(part_of_speech).sample
+    tokens.sample || Token.part_of_speech(part_of_speech).sample.tap { |t| t.value += "*" }
   end
 end
