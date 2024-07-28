@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_07_154711) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_28_154851) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -36,6 +36,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_154711) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
+  create_table "edges", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "token_1_id", null: false
+    t.uuid "token_2_id", null: false
+    t.integer "distance", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "count", default: 0, null: false
+    t.index ["token_1_id", "token_2_id", "distance"], name: "index_edges_on_token_1_id_and_token_2_id_and_distance", unique: true
+    t.index ["token_1_id"], name: "index_edges_on_token_1_id"
+    t.index ["token_2_id"], name: "index_edges_on_token_2_id"
+  end
+
   create_table "tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "value"
     t.jsonb "annotations"
@@ -43,6 +55,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_154711) do
     t.string "context"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["value"], name: "index_tokens_on_value", unique: true
   end
 
   create_table "triplets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -66,5 +79,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_154711) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "edges", "tokens", column: "token_1_id"
+  add_foreign_key "edges", "tokens", column: "token_2_id"
   add_foreign_key "triplets", "tokens"
 end

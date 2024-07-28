@@ -123,7 +123,7 @@ class PartOfSpeechAnnotation
 
       token.annotations["part_of_speech_counts"] = counts
       token.annotations["part_of_speech"] = most_likely_part_of_speech(token.annotations["part_of_speech_counts"])
-      token.save!
+      token.upsert_by_value
     end
   end
 
@@ -155,7 +155,7 @@ class PartOfSpeechAnnotation
 
       token.annotations["part_of_speech_counts"] = counts
       token.annotations["part_of_speech"] = most_likely_part_of_speech(token.annotations["part_of_speech_counts"])
-      token.save!
+      token.upsert_by_value
     end
   end
 
@@ -214,7 +214,7 @@ class PartOfSpeechAnnotation
       puts token.part_of_speech
       token.annotations["part_of_speech_counts"] = counts
       token.annotations["part_of_speech"] = most_likely_part_of_speech(token.annotations["part_of_speech_counts"])
-      token.save!
+      token.upsert_by_value
     end
   end
 

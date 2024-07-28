@@ -21,6 +21,23 @@ class Token < ApplicationRecord
     }
   end
 
+  def edges
+    Edge.where(token_1: self)
+  end
+
+  def self.f(v)
+    find_by(value: v)
+  end
+
+  def self.upsert_by_value(value)
+    new(value:).upsert_by_value
+  end
+
+  def upsert_by_value
+    self.class.upsert({ value: }, unique_by: :value)
+    self.class.f(value)
+  end
+
   def add_context(value)
     self.annotations["contexts"] ||= []
     self.annotations["contexts"] << value

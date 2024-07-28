@@ -1,9 +1,29 @@
 class Corpus
   MAX_CONTEXT_COUNT = 100
   MAX_CONTEXT_LENGTH_IN_TOKENS = 500
+  CONTENT_CHARACTER_LIMIT = 500000
 
   def initialize(content)
     @content = content.gsub(/\r/, "").gsub(/\n/, " ").gsub(/_/, "")
+  end
+
+  def self.all
+    filenames.map do |filename|
+      from_file(filename)
+    end
+  end
+
+    def self.filenames
+    Dir.glob("#{Rails.root.join("lib", "books")}/*.txt")
+  end
+
+  def self.from_file(filename)
+    content = File.read(filename)
+    new(content)
+  end
+
+  def truncate!
+    content = content[0..CONTENT_CHARACTER_LIMIT]
   end
 
   def tokens
@@ -16,7 +36,7 @@ class Corpus
     end
   end
 
-  def index(filename: nil)
+  def index
     touched_values = []
 
     @token_attributes = Token.all
@@ -26,7 +46,6 @@ class Corpus
     sentences.each_with_index do |sentence, index|
       if index % 10 == 0
         puts
-        puts filename
         puts sentence 
       end
 

@@ -16,6 +16,15 @@ case ARGV[0]
 when "index"
   book_collection = BookCollection.new
   book_collection.index!
+when "edges"
+  puts "Deleting existing edges..."
+  Edge.delete_all
+
+  puts "Saving new edges..."
+  Corpus.all.flat_map(&:sentences).each do |sentence|
+    puts sentence
+    sentence.edges
+  end
 when "tokens"
   Token.most_frequent_first.limit(30).each do |token|
     puts "#{token.value} (#{token.annotations['frequency']})"
@@ -60,18 +69,23 @@ when "sample_contexts"
     puts ExpressionMask.sample_contexts(token)
   end
 when "generate"
-  sentence_count = ARGV[1].to_i
+  count = ARGV[1].to_i
+  puts "tokens: #{Token.count}"
+  puts "edges: #{Edge.count}"
 
   ARGV[2..-1].each do |value|
-    token = Token.find_by(value: value)
-    puts token.value.upcase
+    #token = Token.all.sample
+    token = Token.f(value)
 
-    sentence_count.times do
-      related_tokens = Token.related([token])
-      print ExpressionMask.generate_sentence(related_tokens:) + " "
+    count.times do
+      next unless token.present?
+      print "#{token} "
+      edge = token.edges.order("distance asc, count desc")[0..4].sample
+      next unless edge.present?
+      next if edge.token_2.value == edge.token_1.value
+      next if edge.token_2.value == token.value
+      token = edge.token_2
     end
-
-    puts
     puts
   end
 else

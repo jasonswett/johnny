@@ -1,5 +1,4 @@
 class BookCollection
-  CONTENT_CHARACTER_LIMIT = 500000
 
   def index!
     print "Deleting existing tokens (#{Token.count})..."
@@ -20,10 +19,7 @@ class BookCollection
   private
 
   def token_attributes
-    filenames.each do |filename|
-      content = File.read(filename)
-      Corpus.new(content[0..CONTENT_CHARACTER_LIMIT]).index(filename: File.basename(filename))
-    end
+    Corpus.all.map(&:index) # this has never been tested
   end
 
   def part_of_speech(value)
@@ -38,9 +34,5 @@ class BookCollection
     start_index = [0, index - 3].max
     end_index = [index + 3, values.size - 1].min
     values[start_index..end_index].join(" ")
-  end
-
-  def filenames
-    Dir.glob("#{Rails.root.join("lib", "books")}/*.txt")
   end
 end
