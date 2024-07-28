@@ -74,7 +74,8 @@ class Token < ApplicationRecord
     self.annotations["contexts"].count
   end
 
-  def self.related(tokens)
+  def related
+    edges.map(&:token_2)
   end
 
   def contexts

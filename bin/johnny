@@ -34,8 +34,8 @@ when "token"
     puts token.details
   end
 when "related"
-  tokens = Token.where(value: ARGV[1..-1])
-  puts Token.related(tokens).map(&:value).join(", ")
+  token = Token.f(ARGV[1])
+  puts token.related.map(&:value).join("\n")
 when "followers"
   with_token(ARGV[1]) do |token|
     puts token.followers.join("\n")
@@ -74,9 +74,10 @@ when "generate"
   #puts "edges: #{Edge.count}"
 
   PartOfSpeechTag.following_the
+  token = Token.f(ARGV[2])
 
   count.times do
-    puts ExpressionMask.generate_sentence(related_tokens: Token.all)
+    puts ExpressionMask.generate_sentence(related_tokens: token.related)
   end
 
   if false
