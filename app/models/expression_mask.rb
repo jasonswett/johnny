@@ -1,12 +1,14 @@
 class ExpressionMask
   VALID_MASKS = [
-    "DTC NN VBL JJ period",
-    "DTC NN VBL DTC JJ NN period",
-    "VBL DTC NN JJ question_mark",
-    "PRPS VBL DTC JJ NN period",
-    "PRPS VBL IN DTC NN period",
-    "PRPS MD VB period",
-    "DTC JJR VBL NN period",
+    "PRPS MD VB IN DTC NN period",
+    #"DTC NN VBL JJ period",
+    #"DTC NN VBL DTC JJ NN period",
+    #"VBL DTC NN JJ question_mark",
+    #"PRPS VBL DTC JJ NN period",
+    #"PRPS MD VB period",
+    #"PRPS VBL DTC NN period IN DTC NN.",
+    #"PRPS VBL IN DTC NN period",
+    #"DTC JJR VBL NN period",
   ]
 
   def initialize(mask)

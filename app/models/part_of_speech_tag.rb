@@ -10,7 +10,7 @@ class PartOfSpeechTag < ApplicationRecord
     DTC: %w(the a an), # Determiner, common
     EX: %w(there), # Existential there
     FW: %w(via de la et le), # Foreign word
-    IN: %w(in on at by of with without under over between among through during before after around across against from to although after before because if since unless until when while whereas as though than), # Preposition or subordinating conjunction
+    IN: %w(in on at near with without over under through),
     JJ: %w(good bad small large different big high low important young old strong), # Adjective
     JJR: %w(better worse faster slower higher lower stronger weaker older younger), # Adjective, comparative
     JJS: %w(best worst fastest slowest highest lowest strongest weakest oldest youngest), # Adjective, superlative
@@ -59,6 +59,7 @@ class PartOfSpeechTag < ApplicationRecord
 
   def self.tag_all
     tag_exact_matches
+    tag_nouns
   end
 
   def self.tag_exact_matches(parts_of_speech = PARTS_OF_SPEECH)
@@ -74,8 +75,8 @@ class PartOfSpeechTag < ApplicationRecord
     end
   end
 
-  def self.following_the
-    Token.f("the").followers[0..999].each do |token|
+  def self.tag_nouns
+    Token.f("my").followers.each do |token|
       upsert(
         { token_id: token.id, part_of_speech: "NN" },
         unique_by: [:token_id, :part_of_speech]

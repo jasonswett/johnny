@@ -82,9 +82,9 @@ class Token < ApplicationRecord
 
   def followers(pos = nil)
     if pos
-      edges.common.part_of_speech(pos)[0..999].map(&:token_2)
+      edges.part_of_speech(pos).map(&:token_2)
     else
-      edges.common[0..999].map(&:token_2)
+      edges.map(&:token_2)
     end
   end
 

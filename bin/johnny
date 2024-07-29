@@ -61,9 +61,11 @@ when "eval"
   expression_mask = ExpressionMask.new(parts_of_speech.join(" "))
   puts expression_mask.evaluate
 when "tag_parts_of_speech"
+  puts "Deleting parts of speech (#{PartOfSpeechTag.count})..."
   PartOfSpeechTag.delete_all
+  puts "Tagging..."
   PartOfSpeechTag.tag_all
-  PartOfSpeechTag.following_the
+  puts "Done"
 when "sample_contexts"
   with_token(ARGV[1]) do |token|
     puts ExpressionMask.sample_contexts(token)
@@ -73,7 +75,7 @@ when "generate"
   #puts "tokens: #{Token.count}"
   #puts "edges: #{Edge.count}"
 
-  #PartOfSpeechTag.following_the
+  #PartOfSpeechTag.tag_nouns
   token = Token.f(ARGV[2])
 
   count.times do
