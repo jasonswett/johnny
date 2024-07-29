@@ -1,6 +1,10 @@
 class ExpressionMask
   VALID_MASKS = [
     "PRPS MD VB IN DTC NN period",
+    "PRPS MD VB DTC NN period",
+    "PRPS MD RB VB DTC NN period",
+    "PRPS MD VB DTC NN and PRPS MD VB DTC NN period",
+    "PRPS MD VB PRPS period",
     #"DTC NN VBL JJ period",
     #"DTC NN VBL DTC JJ NN period",
     #"VBL DTC NN JJ question_mark",

@@ -23,9 +23,9 @@ class PartOfSpeechTag < ApplicationRecord
     PDT: %w(all any some every both half many such), # Predeterminer
     POS: %w('s), # Possessive ending
     PRP: %w(i you he she we they me us him her), # Personal pronoun
-    PRPS: %w(i you he she we they), # Personal pronoun that can start a sentence
+    PRPS: %w(i you he she we they it), # Personal pronoun that can start a sentence
     "PRP$": %w(my your our their his her its), # Possessive pronoun
-    RB: %w(very quickly slowly carefully quietly loudly happily sadly gently firmly easily barely suddenly always never often sometimes usually rarely where here there everywhere nowhere somewhere above below inside outside nearby far away home abroad upstairs downstairs underground), # Adverb
+    RB: %w(quickly slowly carefully quietly loudly happily sadly gently firmly easily barely suddenly always never often sometimes usually rarely),
     RBR: %w(more less better worse faster slower higher lower closer further), # Adverb, comparative
     RBS: %w(most least best worst fastest slowest highest lowest closest furthest), # Adverb, superlative
     RP: %w(off up down out in on over under away around back forward), # Particle
@@ -60,6 +60,7 @@ class PartOfSpeechTag < ApplicationRecord
   def self.tag_all
     tag_exact_matches
     tag_nouns
+    tag_verbs
   end
 
   def self.tag_exact_matches(parts_of_speech = PARTS_OF_SPEECH)
@@ -76,7 +77,11 @@ class PartOfSpeechTag < ApplicationRecord
   end
 
   def self.tag_nouns
-    Token.f("my").followers.each do |token|
+    period = Token.f(".")
+
+    Token.f("my").followers.select do |token|
+      Edge.exists?(token_1: token, token_2: period)
+    end.each do |token|
       upsert(
         { token_id: token.id, part_of_speech: "NN" },
         unique_by: [:token_id, :part_of_speech]
@@ -87,6 +92,8 @@ class PartOfSpeechTag < ApplicationRecord
   def self.tag_verbs(parts_of_speech = PARTS_OF_SPEECH)
     parts_of_speech[:MD].map { |modal| Token.f(modal) }.each do |token|
       Edge.where(token_1: token).each do |edge|
+        next if edge.token_2.parts_of_speech.any?
+
         upsert(
           { token_id: edge.token_2.id, part_of_speech: "VB" },
           unique_by: [:token_id, :part_of_speech]
