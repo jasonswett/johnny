@@ -83,4 +83,15 @@ class PartOfSpeechTag < ApplicationRecord
       )
     end
   end
+
+  def self.tag_verbs(parts_of_speech = PARTS_OF_SPEECH)
+    parts_of_speech[:MD].map { |modal| Token.f(modal) }.each do |token|
+      Edge.where(token_1: token).each do |edge|
+        upsert(
+          { token_id: edge.token_2.id, part_of_speech: "VB" },
+          unique_by: [:token_id, :part_of_speech]
+        )
+      end
+    end
+  end
 end
