@@ -32,7 +32,7 @@ class Corpus
 
   def sentences
     @content.split(Sentence::REGEX_PATTERN).map do |value|
-      Sentence.new(value)
+      Sentence.new(value:)
     end
   end
 

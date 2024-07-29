@@ -16,12 +16,22 @@ case ARGV[0]
 when "index"
   book_collection = BookCollection.new
   book_collection.index!
+when "sentences"
+  puts "Deleting existing sentences (#{Sentence.count})..."
+  Sentence.delete_all
+
+  Corpus.all.each do |corpus|
+    corpus.sentences.each do |sentence|
+      puts sentence
+      sentence.save
+    end
+  end
 when "edges"
   puts "Deleting existing edges..."
   Edge.delete_all
 
   puts "Saving new edges..."
-  Corpus.all.flat_map(&:sentences).each do |sentence|
+  Sentence.find_each do |sentence|
     puts sentence
     sentence.edges
   end
@@ -54,7 +64,7 @@ when "relabel"
   puts token.part_of_speech
 when "analyze"
   words = ARGV[1..-1]
-  sentence = Sentence.new(words.join(" "))
+  sentence = Sentence.new(value: words.join(" "))
   puts sentence.tokens.flat_map(&:parts_of_speech).join(" ")
 when "eval"
   parts_of_speech = ARGV[1..-1]
