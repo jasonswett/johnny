@@ -9,14 +9,13 @@ class ExpressionMask
     "DTC JJR VBL NN period",
   ]
 
-  def initialize(mask, related_tokens:)
+  def initialize(mask)
     @mask = mask
     @parts_of_speech = mask.split
-    @related_tokens = related_tokens
   end
 
-  def self.generate_sentence(related_tokens:)
-    new(VALID_MASKS.sample, related_tokens:).evaluate
+  def self.generate_sentence
+    new(VALID_MASKS.sample).evaluate
   end
 
   def evaluate

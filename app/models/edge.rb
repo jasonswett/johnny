@@ -8,6 +8,10 @@ class Edge < ApplicationRecord
       .where("part_of_speech_tags.part_of_speech = ?", value)
   end
 
+  scope :common, -> do
+    where("edges.count >= 2")
+  end
+
   def to_s
     [token_1, token_2, distance].join(" ")
   end

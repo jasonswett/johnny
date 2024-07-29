@@ -13,6 +13,10 @@ class Token < ApplicationRecord
     joins(:part_of_speech_tags).where("part_of_speech_tags.part_of_speech = ?", value)
   end
 
+  scope :related, ->(token) do
+    where(id: token.related.map(&:id))
+  end
+
   after_initialize do
     self.annotations ||= {
       "contexts" => [],
@@ -24,10 +28,8 @@ class Token < ApplicationRecord
     Edge.where(token_1: self, distance: 1).order("count desc")
   end
 
-  def common_edges
-    Edge.where(token_1: self, distance: 1)
-      .where("count >= 2")
-      .order("count desc")
+  def related
+    edges.map(&:token_2)
   end
 
   def self.f(v)
@@ -74,19 +76,15 @@ class Token < ApplicationRecord
     self.annotations["contexts"].count
   end
 
-  def related
-    edges.map(&:token_2)
-  end
-
   def contexts
     self.annotations["contexts"] || []
   end
 
   def followers(pos = nil)
     if pos
-      common_edges.part_of_speech(pos).map(&:token_2)
+      edges.common.part_of_speech(pos)[0..999].map(&:token_2)
     else
-      common_edges.map(&:token_2)
+      edges.common[0..999].map(&:token_2)
     end
   end
 

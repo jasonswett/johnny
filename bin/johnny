@@ -73,11 +73,11 @@ when "generate"
   #puts "tokens: #{Token.count}"
   #puts "edges: #{Edge.count}"
 
-  PartOfSpeechTag.following_the
+  #PartOfSpeechTag.following_the
   token = Token.f(ARGV[2])
 
   count.times do
-    puts ExpressionMask.generate_sentence(related_tokens: token.related)
+    puts ExpressionMask.generate_sentence
   end
 when "chain"
   TokenChain.generate
